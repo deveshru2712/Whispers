@@ -14,11 +14,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Thoughtful Bytes | A Modern Blog for Developers",
-    template: "%s | Thoughtful Bytes",
+    default: "Whisper | Thought of my life",
+    template: "%s | Whisper",
   },
   description:
-    "Insightful articles, tutorials, and stories about web development, programming, and technology. Join our community of curious developers.",
+    "Insightful articles, tutorials, and stories about web development, programming, and technology and my Life.",
   keywords: [
     "blog",
     "web development",
@@ -41,7 +41,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen w-screen`}
       >
         {children}
       </body>
