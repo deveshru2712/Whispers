@@ -1,9 +1,13 @@
+"use client";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 
 export default function HomePage() {
+  const { data: session } = useSession();
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -18,17 +22,19 @@ export default function HomePage() {
         </div>
       </main>
 
-      <div className="fixed bottom-6 right-6">
-        <Button
-          asChild
-          className="rounded-md px-2.5 py-1.5 shadow-lg hover:shadow-xl transition-shadow"
-        >
-          <Link href="/posts/create">
-            <Pencil className="mr-2" size={20} />
-            <span>Create a Post</span>
-          </Link>
-        </Button>
-      </div>
+      {session && session.user.isAdmin && (
+        <div className="fixed bottom-6 right-6">
+          <Button
+            asChild
+            className="rounded-md px-2.5 py-1.5 shadow-lg hover:shadow-xl transition-shadow"
+          >
+            <Link href="/posts/create">
+              <Pencil className="mr-2" size={20} />
+              <span>Create a Post</span>
+            </Link>
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

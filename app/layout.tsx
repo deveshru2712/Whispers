@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import Overlay from "@/components/Overlay";
 import { SessionProvider } from "next-auth/react";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -54,6 +55,7 @@ export default function RootLayout({
             <div className="relative z-10 min-h-screen">{children}</div>
           </ThemeProvider>
         </SessionProvider>
+        <Toaster />
       </body>
     </html>
   );

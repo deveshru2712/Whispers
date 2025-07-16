@@ -19,7 +19,7 @@ export default function AuthErrorPage() {
   const error = searchParams.get("error");
 
   const errorConfig = {
-    AccessDenied: {
+    unauthorized: {
       title: "Access Denied",
       description: "You don't have permission to access this resource",
       icon: <AlertTriangle className="w-5 h-5 text-red-500" />,

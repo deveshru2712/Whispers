@@ -62,7 +62,7 @@ export default function SignUpPage() {
         <CardFooter className="flex-col gap-3">
           <Button
             variant={theme === "dark" ? "default" : "outline"}
-            className="w-full gap-2 hover:shadow-md transition-shadow"
+            className="w-full gap-2 hover:shadow-md transition-shadow cursor-pointer"
             onClick={handleGoogleSignUp}
           >
             <GoogleIcon />

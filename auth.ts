@@ -1,18 +1,10 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { SupabaseAdapter } from "@auth/supabase-adapter";
-import { createClient } from "@supabase/supabase-js";
+import { createSupaBaseClient } from "./lib/supabase";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const supabase = createSupaBaseClient();
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: SupabaseAdapter({
-    url: process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    secret: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  }),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -30,12 +22,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (error || !data) {
           console.error("Unauthorized access attempt:", user.email);
-          return "/?error=unauthorized";
+          return "?error=unauthorized";
         }
         return true;
       } catch (error) {
         console.error("SignIn error:", error);
-        return "/?error=auth_error";
+        return "?error=auth_error";
       }
     },
     async jwt({ token, user, trigger, session }) {

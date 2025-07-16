@@ -1,8 +1,10 @@
 "use client";
 import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
 import { Button } from "@/components/ui/button";
+import { createPosts } from "@/lib/actions/post.actions";
 import { BookCheck } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 export default function HomePage() {
   const [post, setPost] = useState("");
@@ -11,6 +13,12 @@ export default function HomePage() {
   const onChange = (post: string) => {
     setPost(post);
     console.log(post);
+  };
+
+  const handleSubmit = async () => {
+    const data = await createPosts(post);
+    console.log(data);
+    toast.success("Post created successfully");
   };
 
   useEffect(() => {
@@ -37,6 +45,7 @@ export default function HomePage() {
 
         <Button
           ref={buttonRef}
+          onClick={handleSubmit}
           className="flex items-center absolute z-10 bottom-10 right-10 bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-md shadow dark:shadow-2xl cursor-pointer"
         >
           <BookCheck />
