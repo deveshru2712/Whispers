@@ -9,9 +9,18 @@ export default async function middleware(request: NextRequest) {
       secureCookie: process.env.NODE_ENV === "production",
     });
 
-    const protectedRoute = ["/home", "/profile"];
-    const authRoute = ["/sign-in"];
+    const adminRoutes = ["/post/create", "/post/update"];
+    const authRoute = "/sign-in";
+    const publicRoutes = ["/", "/blog"];
     const { pathname } = request.nextUrl;
+
+    const isPublicRoute = publicRoutes.some(
+      (route) => pathname === route || pathname.startsWith(`${route}/`)
+    );
+
+    if (isPublicRoute) {
+      return NextResponse.next();
+    }
 
     if (
       pathname.startsWith("/api/") ||
@@ -21,13 +30,23 @@ export default async function middleware(request: NextRequest) {
       return NextResponse.next();
     }
 
-    if (authRoute.includes(pathname) && token) {
-      return NextResponse.redirect(new URL("/", request.url));
+    if (pathname.startsWith(authRoute)) {
+      if (token) {
+        return NextResponse.redirect(new URL("/", request.url));
+      }
+      return NextResponse.next();
     }
 
-    if (protectedRoute.some((route) => pathname.startsWith(route))) {
+    const isAdminRoute = adminRoutes.some((route) =>
+      pathname.startsWith(route)
+    );
+
+    if (isAdminRoute) {
       if (!token) {
-        return NextResponse.redirect(new URL("/sign-in", request.url));
+        return NextResponse.redirect(new URL(authRoute, request.url));
+      }
+      if (!token.isAdmin) {
+        return NextResponse.redirect(new URL("/", request.url));
       }
     }
 

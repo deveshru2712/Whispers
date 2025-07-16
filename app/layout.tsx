@@ -1,15 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import Overlay from "@/components/Overlay";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
@@ -42,7 +38,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen w-screen`}
+        className={`${geistSans.variable} antialiased h-screen w-screen transition-colors duration-300 ease-in-out overflow-hidden`}
       >
         <ThemeProvider
           attribute="class"
@@ -50,7 +46,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <div className="min-h-screen fixed -z-50 pointer-events-none">
+            <Overlay />
+          </div>
+          <div className="relative z-10 min-h-screen">{children}</div>
         </ThemeProvider>
       </body>
     </html>
