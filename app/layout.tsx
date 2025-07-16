@@ -39,7 +39,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} antialiased h-screen w-screen transition-colors duration-300 ease-in-out overflow-hidden`}
+        className={`${geistSans.variable} antialiased h-screen w-screen transition-colors duration-300 ease-in-out`}
       >
         <SessionProvider>
           <ThemeProvider

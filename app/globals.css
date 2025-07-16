@@ -120,3 +120,17 @@
     @apply bg-background text-foreground;
   }
 }
+html {
+  overflow: -moz-scrollbars-none;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+body {
+  overflow-x: hidden;
+}
