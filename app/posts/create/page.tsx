@@ -1,15 +1,23 @@
 "use client";
 import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
+import { Button } from "@/components/ui/button";
 import { BookCheck } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function HomePage() {
   const [post, setPost] = useState("");
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const onChange = (post: string) => {
     setPost(post);
     console.log(post);
   };
+
+  useEffect(() => {
+    if (buttonRef.current) {
+      buttonRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
+  }, [post]);
 
   return (
     <main className="container relative mx-auto px-4 pt-24 pb-12 md:pt-26">
@@ -26,10 +34,14 @@ export default function HomePage() {
         <div className="w-full max-w-4xl min-h-[400px] md:min-h-[calc(100vh-250px)] border rounded-lg shadow-lg dark:shadow-2xl p-6">
           <SimpleEditor post={post} OnChange={onChange} />
         </div>
-        <div className="flex items-center absolute z-10 bottom-10 right-10 bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-md shadow dark:shadow-2xl cursor-pointer">
+
+        <Button
+          ref={buttonRef}
+          className="flex items-center absolute z-10 bottom-10 right-10 bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-md shadow dark:shadow-2xl cursor-pointer"
+        >
           <BookCheck />
           Publish
-        </div>
+        </Button>
       </div>
     </main>
   );
