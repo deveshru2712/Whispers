@@ -3,6 +3,7 @@ import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor
 import { Button } from "@/components/ui/button";
 import { createPosts } from "@/lib/actions/post.actions";
 import { BookCheck } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -10,15 +11,18 @@ export default function HomePage() {
   const [post, setPost] = useState("");
   const buttonRef = useRef<HTMLButtonElement>(null);
 
+  const router = useRouter();
+
   const onChange = (post: string) => {
     setPost(post);
     console.log(post);
   };
 
   const handleSubmit = async () => {
-    const data = await createPosts(post);
-    console.log(data);
+    await createPosts(post);
     toast.success("Post created successfully");
+
+    router.push("/");
   };
 
   useEffect(() => {

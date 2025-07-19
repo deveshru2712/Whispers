@@ -1,16 +1,11 @@
 import NextAuth from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
 import { createSupaBaseClient } from "./lib/supabase";
+import Google from "next-auth/providers/google";
 
 const supabase = createSupaBaseClient();
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
-  ],
+  providers: [Google],
   callbacks: {
     async signIn({ user }) {
       try {
@@ -35,12 +30,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         try {
           const { data: userData } = await supabase
             .from("users")
-            .select("is_admin")
-            .eq("id", user.id)
+            .select("is_admin, id")
+            .eq("email", user.email!)
             .single();
 
-          token.id = user.id;
-          token.isAdmin = userData?.is_admin || false;
+          if (userData) {
+            token.id = userData.id;
+            token.isAdmin = userData.is_admin;
+          }
         } catch (error) {
           console.error("JWT callback error:", error);
         }

@@ -4,9 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useEffect } from "react";
 
 export default function HomePage() {
   const { data: session } = useSession();
+
+  useEffect(() => {
+    console.log(session);
+  }, [session]);
 
   return (
     <div className="min-h-screen flex flex-col">

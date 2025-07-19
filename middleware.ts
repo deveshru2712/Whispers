@@ -9,7 +9,7 @@ export default async function middleware(request: NextRequest) {
       secureCookie: process.env.NODE_ENV === "production",
     });
 
-    const adminRoutes = ["/post/create", "/post/update"];
+    const adminRoutes = ["/posts/create", "/posts/update"];
     const authRoute = "/sign-in";
     const publicRoutes = ["/", "/blog"];
     const { pathname } = request.nextUrl;
