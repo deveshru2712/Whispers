@@ -6,24 +6,13 @@ export const createPosts = async (post: string) => {
   const session = await auth();
   const supabase = createSupaBaseClient();
 
-  if (!session || !session.user.isAdmin) return null;
-
-  const { data: userData, error: userError } = await supabase
-    .from("users")
-    .select("id")
-    .eq("email", session.user.email)
-    .single();
-
-  console.log("user", userData);
-
-  if (userError || !userData) {
-    console.log(userError);
-    throw new Error(userError?.message || "Failed to find user");
+  if (!session || !session.user || !session.user.id || !session.user.isAdmin) {
+    return null;
   }
 
   const { data: blogData, error: blogError } = await supabase
     .from("blogs")
-    .insert({ post, user_id: userData.id })
+    .insert({ post, user_id: session.user.id })
     .select();
 
   if (blogError || !blogData) {

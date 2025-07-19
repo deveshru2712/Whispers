@@ -21,7 +21,6 @@ export default function HomePage() {
   const handleSubmit = async () => {
     await createPosts(post);
     toast.success("Post created successfully");
-
     router.push("/");
   };
 
