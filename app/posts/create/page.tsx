@@ -47,7 +47,7 @@ export default function HomePage() {
   }, [post]);
 
   return (
-    <main className="container relative mx-auto px-4 pt-24 pb-20 md:pb-24 shrink-0">
+    <main className="container relative mx-auto px-4 pt-26 pb-32">
       <div className="flex flex-col items-center">
         <div className="text-center max-w-2xl w-full mb-8">
           <h1 className="text-2xl md:text-3xl font-bold mb-2 dark:text-gray-100 text-gray-800">
@@ -58,9 +58,9 @@ export default function HomePage() {
           </p>
         </div>
 
-        <div className="w-full fixed top-48 max-w-4xl min-h-[400px] md:min-h-[calc(100vh-250px)] border rounded-lg shadow-lg dark:shadow-2xl p-6 overflow-y-auto">
-          <div>
-            <Label htmlFor="post-title" className="text-left w-full mb-2">
+        <div className="w-full max-w-4xl border rounded-lg shadow-lg dark:shadow-2xl p-6">
+          <div className="mb-4">
+            <Label htmlFor="post-title" className="text-left w-full mb-2 block">
               Title
             </Label>
             <Input
@@ -72,7 +72,7 @@ export default function HomePage() {
             />
           </div>
 
-          <div>
+          <div className="min-h-[400px]">
             <SimpleEditor post={post} OnChange={onChange} />
           </div>
         </div>
@@ -81,7 +81,7 @@ export default function HomePage() {
           ref={buttonRef}
           onClick={handleSubmit}
           disabled={isSubmitting || !post.trim() || !title.trim()}
-          className="fixed bottom-15 md:bottom-10 right-10 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-md shadow-lg transition-all"
+          className="fixed bottom-10 right-10 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-md shadow-lg transition-all z-50"
           aria-label="Publish post"
         >
           {isSubmitting ? (

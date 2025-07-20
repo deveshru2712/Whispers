@@ -27,15 +27,14 @@ export default function HomePage() {
         setLoading(false);
       }
     };
-
     getPosts();
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col relative">
       <Navbar />
 
-      <main className="flex-1 mt-26 p-4 relative">
+      <main className="flex-1 p-4 relative">
         {session && session.user.isAdmin && !loading && (
           <div className="text-center max-w-2xl mx-auto mb-8">
             <h1 className="text-4xl font-bold mb-4">Welcome back Yash.</h1>
@@ -48,7 +47,7 @@ export default function HomePage() {
 
         <div className="max-w-6xl h-[calc(100vh-104px)] mx-auto">
           {loading ? (
-            <div className="h-screen z-50">
+            <div className="absolute inset-0 flex justify-center items-center">
               <Loader />
             </div>
           ) : posts && posts.length > 0 ? (

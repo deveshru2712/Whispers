@@ -18,40 +18,6 @@ body {
   padding: 0;
 }
 
-// .editor-root {
-//   display: flex;
-//   flex-direction: column;
-//   height: 100%;
-//   position: relative;
-// }
-
-// .editor-content-wrapper {
-//   flex: 1;
-//   overflow-y: auto;
-//   padding: 1rem;
-//   min-height: 200px; // Adjust as needed
-//   max-height: calc(100vh - 200px); // Adjust based on your toolbar height
-
-//   // Ensure proper editor content sizing
-//   .simple-editor-content {
-//     min-height: 100%;
-//     outline: none;
-
-//     // ProseMirror specific styles
-//     .ProseMirror {
-//       min-height: 100%;
-//       padding-bottom: 2rem; // Space at bottom
-//     }
-//   }
-// }
-
-// // Mobile specific adjustments
-// @media (max-width: 768px) {
-//   .editor-content-wrapper {
-//     max-height: calc(100vh - 250px); // More space for mobile toolbar
-//   }
-// }
-
 html,
 body,
 #root,
