@@ -1,6 +1,8 @@
 "use client";
 import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { createPosts } from "@/lib/actions/post.actions";
 import { BookCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -9,29 +11,43 @@ import { toast } from "sonner";
 
 export default function HomePage() {
   const [post, setPost] = useState("");
+  const [title, setTitle] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   const router = useRouter();
 
   const onChange = (post: string) => {
     setPost(post);
-    console.log(post);
   };
 
   const handleSubmit = async () => {
-    await createPosts(post);
-    toast.success("Post created successfully");
-    router.push("/");
+    if (!title.trim() || !post.trim()) {
+      toast.error("Please add a title and content before publishing");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      await createPosts({ title, post: post });
+      toast.success("Post created successfully");
+      router.push("/");
+    } catch (error) {
+      toast.error("Failed to create post");
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   useEffect(() => {
-    if (buttonRef.current) {
+    if (buttonRef.current && post) {
       buttonRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
     }
   }, [post]);
 
   return (
-    <main className="container relative mx-auto px-4 pt-24 pb-12 md:pt-26">
+    <main className="container relative mx-auto px-4 pt-24 pb-20 md:pb-24 shrink-0">
       <div className="flex flex-col items-center">
         <div className="text-center max-w-2xl w-full mb-8">
           <h1 className="text-2xl md:text-3xl font-bold mb-2 dark:text-gray-100 text-gray-800">
@@ -42,17 +58,40 @@ export default function HomePage() {
           </p>
         </div>
 
-        <div className="w-full max-w-4xl min-h-[400px] md:min-h-[calc(100vh-250px)] border rounded-lg shadow-lg dark:shadow-2xl p-6">
-          <SimpleEditor post={post} OnChange={onChange} />
+        <div className="w-full fixed top-48 max-w-4xl min-h-[400px] md:min-h-[calc(100vh-250px)] border rounded-lg shadow-lg dark:shadow-2xl p-6 overflow-y-auto">
+          <div>
+            <Label htmlFor="post-title" className="text-left w-full mb-2">
+              Title
+            </Label>
+            <Input
+              id="post-title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="A title for your post..."
+              className="w-full"
+            />
+          </div>
+
+          <div>
+            <SimpleEditor post={post} OnChange={onChange} />
+          </div>
         </div>
 
         <Button
           ref={buttonRef}
           onClick={handleSubmit}
-          className="flex items-center absolute z-10 bottom-10 right-10 bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-md shadow dark:shadow-2xl cursor-pointer"
+          disabled={isSubmitting || !post.trim() || !title.trim()}
+          className="fixed bottom-15 md:bottom-10 right-10 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-md shadow-lg transition-all"
+          aria-label="Publish post"
         >
-          <BookCheck />
-          Publish
+          {isSubmitting ? (
+            "Publishing..."
+          ) : (
+            <>
+              <BookCheck className="mr-2 h-4 w-4" />
+              Publish
+            </>
+          )}
         </Button>
       </div>
     </main>

@@ -2,7 +2,7 @@
 import { auth } from "@/auth";
 import { createSupaBaseClient } from "../supabase";
 
-export const createPosts = async (post: string) => {
+export const createPosts = async ({ title, post }: createPostsProps) => {
   const session = await auth();
   const supabase = createSupaBaseClient();
 
@@ -12,7 +12,7 @@ export const createPosts = async (post: string) => {
 
   const { data: blogData, error: blogError } = await supabase
     .from("blogs")
-    .insert({ post, user_id: session.user.id })
+    .insert({ post, title, user_id: session.user.id })
     .select();
 
   if (blogError || !blogData) {

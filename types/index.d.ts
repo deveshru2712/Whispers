@@ -17,3 +17,10 @@ declare module "next-auth" {
     isAdmin: boolean;
   }
 }
+
+declare global {
+  interface createPostsProps {
+    title: string;
+    post: string;
+  }
+}
