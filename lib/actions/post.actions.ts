@@ -24,3 +24,17 @@ export const createPosts = async (post: string) => {
 
   return blogData[0];
 };
+
+export const fetchPosts = async (page = 1, limit = 9): Promise<string[]> => {
+  const supabase = createSupaBaseClient();
+
+  const query = supabase.from("blogs").select();
+  query.range((page - 1) * limit, page * limit - 1);
+  const { data: fetchedData, error: fetchingPostError } = await query;
+  if (fetchingPostError) {
+    console.log(fetchingPostError);
+    throw new Error(fetchingPostError?.message || "Failed to fetch posts");
+  }
+
+  return fetchedData;
+};
