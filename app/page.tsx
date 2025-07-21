@@ -52,7 +52,7 @@ export default function HomePage() {
             <Loader />
           </div>
         ) : posts.length > 0 ? (
-          <div className="flex flex-col items-center space-y-1.5">
+          <div className="max-w-xl mx-auto flex flex-col items-start space-y-1.5">
             {posts.map((post) => (
               <PostCard
                 key={post.id}

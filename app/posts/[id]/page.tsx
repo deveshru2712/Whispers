@@ -1,38 +1,4 @@
-// import { fetchPostById } from "@/lib/actions/post.actions";
-// import formateTime from "@/lib/formatTime";
-// import { ArrowLeft } from "lucide-react";
-// import Link from "next/link";
-
-// export default async function Page({ params }: PostPage) {
-//   const postId = params.id;
-//   const post = await fetchPostById(postId);
-//   console.log(post);
-
-//   return (
-//     <div className="w-full h-screen">
-//       <div className="max-w-6xl mx-auto w-full h-full mt-12 px-6 md:px-12">
-//         <div className="flex flex-col space-y-9">
-//           <Link href={"/"}>
-//             <button className="flex px-4 py-1.5 rounded-lg items-center bg-transparent border shadow dark:shadow-2xl cursor-pointer text-slate-950 dark:text-slate-50">
-//               <ArrowLeft />
-//               Back
-//             </button>
-//           </Link>
-
-//           <div>
-//             <h1 className="text-2xl font-semibold dark:text-slate-50/80 hover:dark:text-slate-50 text-slate-900 hover:text-slate-600 cursor-pointer ">
-//               {post.title}
-//             </h1>
-//             <span className="text-slate-600 dark:text-slate-300 text-sm">
-//               {formateTime(post.createdAt)}
-//             </span>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
+import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
 import { fetchPostById } from "@/lib/actions/post.actions";
 import formateTime from "@/lib/formatTime";
 import { ArrowLeft } from "lucide-react";
@@ -65,9 +31,8 @@ export default async function Page({ params }: PostPage) {
               </p>
             </header>
 
-            <div className="prose max-w-none p-6 rounded-lg shadow-sm bg-white/5">
-              {/* Add your post content here when available */}
-              {/* <p>{post.content}</p> */}
+            <div className="bg-white/80 dark:bg-white/5 rounded-md shadow dark:shadow-2xl">
+              <SimpleEditor post={post.post} editable={false} />
             </div>
           </article>
         </div>
