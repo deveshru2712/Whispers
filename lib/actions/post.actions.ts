@@ -25,7 +25,7 @@ export const createPosts = async ({ title, post }: createPostsProps) => {
   return blogData[0];
 };
 
-export const fetchPosts = async (page = 1, limit = 9): Promise<string[]> => {
+export const fetchPosts = async (page = 1, limit = 9): Promise<Post[]> => {
   const supabase = createSupaBaseClient();
 
   const query = supabase.from("blogs").select();

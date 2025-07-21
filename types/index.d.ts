@@ -23,4 +23,16 @@ declare global {
     title: string;
     post: string;
   }
+
+  interface PostCardProps {
+    id: string;
+    title: string;
+    createdAt: Date | string;
+  }
+  interface Post {
+    id: string;
+    title: string;
+    post: string;
+    createdAt: Date;
+  }
 }

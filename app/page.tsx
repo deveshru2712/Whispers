@@ -1,6 +1,7 @@
 "use client";
 import Loader from "@/components/Loader";
 import Navbar from "@/components/Navbar";
+import PostCard from "@/components/PostCard";
 import { Button } from "@/components/ui/button";
 import { fetchPosts } from "@/lib/actions/post.actions";
 import { Pencil } from "lucide-react";
@@ -10,8 +11,7 @@ import { useEffect, useState } from "react";
 
 export default function HomePage() {
   const { data: session } = useSession();
-
-  const [posts, setPosts] = useState<string[] | []>();
+  const [posts, setPosts] = useState<Post[] | []>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,48 +31,62 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col relative">
+    <div className="min-h-screen flex flex-col">
       <Navbar />
 
-      <main className="flex-1 p-4 relative">
-        {session && session.user.isAdmin && !loading && (
-          <div className="text-center max-w-2xl mx-auto mb-8">
-            <h1 className="text-4xl font-bold mb-4">Welcome back Yash.</h1>
-            <p className="text-lg text-muted-foreground mb-8">
+      <main className="flex-1 container mx-auto px-4 py-8">
+        {session?.user.isAdmin && (
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">
+              Welcome back{session.user.name ? ` ${session.user.name}` : ""}.
+            </h1>
+            <p className="text-muted-foreground mb-6">
               Share your thoughts and ideas with the world. Create your first
               post to get started!
             </p>
           </div>
         )}
 
-        <div className="max-w-6xl h-[calc(100vh-104px)] mx-auto">
-          {loading ? (
-            <div className="absolute inset-0 flex justify-center items-center">
-              <Loader />
-            </div>
-          ) : posts && posts.length > 0 ? (
-            <div className="text-white">post</div>
-          ) : session?.user.isAdmin ? (
-            <div className="w-full h-full flex justify-center items-center text-2xl tracking-tight font-bold text-slate-900 dark:text-slate-300">
-              You lazy ass, create some blogs for people to read.😭😭
-            </div>
-          ) : (
-            <div className="w-full h-full flex justify-center items-center text-2xl tracking-tight font-bold text-slate-900 dark:text-slate-300">
-              Nothing here.😭😭
-            </div>
-          )}
-        </div>
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <Loader />
+          </div>
+        ) : posts.length > 0 ? (
+          <div className="flex flex-col items-center space-y-1.5">
+            {posts.map((post) => (
+              <PostCard
+                key={post.id}
+                id={post.id}
+                createdAt={post.createdAt}
+                title={post.title}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <h2 className="text-2xl font-bold mb-4 text-slate-900 dark:text-slate-100">
+              {session?.user.isAdmin
+                ? "No posts yet - time to create something amazing!"
+                : "No posts available yet"}
+            </h2>
+            <p className="text-muted-foreground mb-6">
+              {session?.user.isAdmin
+                ? "Your audience is waiting for your content!"
+                : "Check back later for updates"}
+            </p>
+          </div>
+        )}
       </main>
 
-      {session && session.user.isAdmin && !loading && (
+      {session?.user.isAdmin && (
         <div className="fixed bottom-6 right-6">
           <Button
             asChild
-            className="rounded-md px-2.5 py-1.5 shadow-lg hover:shadow-xl transition-shadow"
+            className="rounded-lg shadow-lg h-14 w-14 p-0 md:h-auto md:w-auto md:px-4 md:py-2"
           >
-            <Link href="/posts/create">
-              <Pencil className="mr-2" size={20} />
-              <span>Create a Post</span>
+            <Link href="/posts/create" className="flex items-center">
+              <Pencil className="h-5 w-5 md:mr-2" />
+              <span className="hidden md:inline">Create Post</span>
             </Link>
           </Button>
         </div>
