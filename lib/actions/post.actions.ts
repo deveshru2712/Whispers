@@ -38,3 +38,20 @@ export const fetchPosts = async (page = 1, limit = 9): Promise<Post[]> => {
 
   return fetchedData;
 };
+
+export const fetchPostById = async (postId: string): Promise<Post> => {
+  const supabase = createSupaBaseClient();
+
+  const { data: post, error } = await supabase
+    .from("blogs")
+    .select()
+    .eq("id", postId)
+    .single();
+
+  if (error) {
+    console.log(error);
+    throw new Error(error?.message || "Unable to fetch the blog.");
+  }
+
+  return post;
+};

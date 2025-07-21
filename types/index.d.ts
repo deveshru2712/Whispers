@@ -29,10 +29,14 @@ declare global {
     title: string;
     createdAt: Date | string;
   }
+
   interface Post {
     id: string;
     title: string;
     post: string;
     createdAt: Date;
+  }
+  interface PostPage {
+    params: { id: string };
   }
 }
