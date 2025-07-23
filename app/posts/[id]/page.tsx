@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export default async function Page({ params }: PostPage) {
-  const postId = params.id;
+  const { id: postId } = await params;
   const post = await fetchPostById(postId);
 
   return (

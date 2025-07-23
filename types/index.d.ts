@@ -36,7 +36,10 @@ declare global {
     post: string;
     createdAt: Date;
   }
+
   interface PostPage {
-    params: { id: string };
+    params: Promise<{
+      id: string;
+    }>;
   }
 }

@@ -1,34 +1,14 @@
-"use client";
-import Loader from "@/components/Loader";
 import Navbar from "@/components/Navbar";
 import PostCard from "@/components/PostCard";
 import { Button } from "@/components/ui/button";
 import { fetchPosts } from "@/lib/actions/post.actions";
 import { Pencil } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { auth } from "@/auth";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 
-export default function HomePage() {
-  const { data: session } = useSession();
-  const [posts, setPosts] = useState<Post[] | []>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const getPosts = async () => {
-      try {
-        setLoading(true);
-        const blog = await fetchPosts();
-        setPosts(blog);
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-        setPosts([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    getPosts();
-  }, []);
+export default async function HomePage() {
+  const session = await auth();
+  const posts = await fetchPosts();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -47,11 +27,7 @@ export default function HomePage() {
           </div>
         )}
 
-        {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <Loader />
-          </div>
-        ) : posts.length > 0 ? (
+        {posts.length > 0 ? (
           <div className="max-w-xl mx-auto flex flex-col items-start space-y-1.5">
             {posts.map((post) => (
               <PostCard
