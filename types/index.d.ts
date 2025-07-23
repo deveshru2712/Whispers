@@ -1,20 +1,11 @@
-import { DefaultSession, DefaultUser } from "next-auth";
+import { type DefaultSession } from "next-auth";
 
 declare module "next-auth" {
-  interface Session extends DefaultSession {
+  interface Session {
+    supabaseAccessToken?: string;
     user: {
-      id: string;
-      isAdmin: boolean;
+      address: string;
     } & DefaultSession["user"];
-  }
-
-  interface User extends DefaultUser {
-    isAdmin?: boolean;
-  }
-
-  interface JWT {
-    id: string;
-    isAdmin: boolean;
   }
 }
 
@@ -43,12 +34,12 @@ declare global {
     }>;
   }
 
-  export interface ImageUploaderProps {
+  interface ImageUploaderProps {
     userId: string;
     file: File;
   }
 
-  export interface UploadResult {
+  interface UploadResult {
     path: string;
     publicUrl: string;
   }

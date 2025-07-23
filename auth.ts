@@ -1,58 +1,26 @@
 import NextAuth from "next-auth";
-import { createSupaBaseClient } from "./lib/supabase";
+import { SupabaseAdapter } from "@auth/supabase-adapter";
+import jwt from "jsonwebtoken";
 import Google from "next-auth/providers/google";
-
-const supabase = createSupaBaseClient();
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [Google],
+  adapter: SupabaseAdapter({
+    url: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    secret: process.env.SUPABASE_SERVICE_ROLE_KEY,
+  }),
   callbacks: {
-    async signIn({ user }) {
-      try {
-        const { data, error } = await supabase
-          .from("users")
-          .select("email")
-          .eq("email", user.email!)
-          .single();
-
-        if (error || !data) {
-          console.error("Unauthorized access attempt:", user.email);
-          return "?error=unauthorized";
-        }
-        return true;
-      } catch (error) {
-        console.error("SignIn error:", error);
-        return "?error=auth_error";
-      }
-    },
-    async jwt({ token, user, trigger, session }) {
-      if (user) {
-        try {
-          const { data: userData } = await supabase
-            .from("users")
-            .select("is_admin, id")
-            .eq("email", user.email!)
-            .single();
-
-          if (userData) {
-            token.id = userData.id;
-            token.isAdmin = userData.is_admin;
-          }
-        } catch (error) {
-          console.error("JWT callback error:", error);
-        }
-      }
-
-      if (trigger === "update" && session?.user) {
-        token = { ...token, ...session.user };
-      }
-
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id as string;
-        session.user.isAdmin = token.isAdmin as boolean;
+    async session({ session, user }) {
+      const signingSecret = process.env.SUPABASE_JWT_SECRET;
+      if (signingSecret) {
+        const payload = {
+          aud: "authenticated",
+          exp: Math.floor(new Date(session.expires).getTime() / 1000),
+          sub: user.id,
+          email: user.email,
+          role: "authenticated",
+        };
+        session.supabaseAccessToken = jwt.sign(payload, signingSecret);
       }
       return session;
     },
