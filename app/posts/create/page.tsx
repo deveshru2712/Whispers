@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createPosts } from "@/lib/actions/post.actions";
 import { BookCheck } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -14,6 +15,8 @@ export default function HomePage() {
   const [title, setTitle] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
+
+  const { data: session } = useSession();
 
   const router = useRouter();
 
@@ -73,7 +76,11 @@ export default function HomePage() {
           </div>
 
           <div className="min-h-[400px]">
-            <SimpleEditor post={post} OnChange={onChange} />
+            <SimpleEditor
+              post={post}
+              OnChange={onChange}
+              userId={session?.user.id}
+            />
           </div>
         </div>
 

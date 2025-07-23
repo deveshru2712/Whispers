@@ -42,4 +42,14 @@ declare global {
       id: string;
     }>;
   }
+
+  export interface ImageUploaderProps {
+    userId: string;
+    file: File;
+  }
+
+  export interface UploadResult {
+    path: string;
+    publicUrl: string;
+  }
 }

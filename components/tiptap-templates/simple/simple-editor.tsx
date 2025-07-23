@@ -144,12 +144,14 @@ interface SimpleEditorProps {
   post: string;
   OnChange?: (post: string) => void;
   isEditable?: boolean;
+  userId?: string;
 }
 
 export function SimpleEditor({
   post,
   OnChange,
   isEditable = true,
+  userId,
 }: SimpleEditorProps) {
   const isMobile = useMobile();
   const windowSize = useWindowSize();
@@ -185,7 +187,7 @@ export function SimpleEditor({
         accept: "image/*",
         maxSize: MAX_FILE_SIZE,
         limit: 3,
-        upload: handleImageUpload,
+        upload: handleImageUpload(userId),
         onError: (error) => console.error("Upload failed:", error),
       }),
       TrailingNode,
