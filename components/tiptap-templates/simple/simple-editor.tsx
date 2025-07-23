@@ -143,13 +143,13 @@ const MobileToolbarContent = ({
 interface SimpleEditorProps {
   post: string;
   OnChange?: (post: string) => void;
-  editable?: boolean;
+  isEditable?: boolean;
 }
 
 export function SimpleEditor({
   post,
   OnChange,
-  editable = true,
+  isEditable = true,
 }: SimpleEditorProps) {
   const isMobile = useMobile();
   const windowSize = useWindowSize();
@@ -159,6 +159,7 @@ export function SimpleEditor({
   const toolbarRef = React.useRef<HTMLDivElement>(null);
 
   const editor = useEditor({
+    editable: isEditable,
     immediatelyRender: false,
     editorProps: {
       attributes: {
@@ -212,7 +213,7 @@ export function SimpleEditor({
   return (
     <EditorContext.Provider value={{ editor }}>
       <div className="editor-root">
-        {editable && (
+        {isEditable && (
           <Toolbar
             ref={toolbarRef}
             style={

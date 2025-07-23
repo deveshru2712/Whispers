@@ -1,8 +1,10 @@
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
-const formateTime = (time: Date) => {
-  dayjs.extend(relativeTime);
+dayjs.extend(relativeTime);
+
+const formatTime = (time: Date) => {
+  if (!time) return "No date available";
 
   const date = dayjs(time);
 
@@ -23,4 +25,4 @@ const formateTime = (time: Date) => {
   return formattedDate;
 };
 
-export default formateTime;
+export default formatTime;

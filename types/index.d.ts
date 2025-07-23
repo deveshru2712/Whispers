@@ -34,7 +34,7 @@ declare global {
     id: string;
     title: string;
     post: string;
-    createdAt: Date;
+    created_at: Date;
   }
 
   interface PostPage {
