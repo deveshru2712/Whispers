@@ -29,8 +29,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/sign-in",
     error: "/auth/error",
   },
-  session: {
-    strategy: "jwt",
-  },
   debug: process.env.NODE_ENV === "development",
 });

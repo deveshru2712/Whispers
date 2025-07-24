@@ -4,9 +4,9 @@ import { createSupaBaseClient } from "../supabase";
 
 export const createPosts = async ({ title, post }: createPostsProps) => {
   const session = await auth();
-  const supabase = createSupaBaseClient();
+  const supabase = await createSupaBaseClient();
 
-  if (!session || !session.user || !session.user.id || !session.user.isAdmin) {
+  if (!session) {
     return null;
   }
 
@@ -26,7 +26,7 @@ export const createPosts = async ({ title, post }: createPostsProps) => {
 };
 
 export const fetchPosts = async (page = 1, limit = 9): Promise<Post[]> => {
-  const supabase = createSupaBaseClient();
+  const supabase = await createSupaBaseClient();
 
   const query = supabase.from("blogs").select();
   query.range((page - 1) * limit, page * limit - 1);
@@ -40,7 +40,7 @@ export const fetchPosts = async (page = 1, limit = 9): Promise<Post[]> => {
 };
 
 export const fetchPostById = async (postId: string): Promise<Post> => {
-  const supabase = createSupaBaseClient();
+  const supabase = await createSupaBaseClient();
 
   const { data: post, error } = await supabase
     .from("blogs")

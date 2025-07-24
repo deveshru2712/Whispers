@@ -1,5 +1,5 @@
-import { getToken } from "next-auth/jwt";
 import { NextResponse, type NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
 
 export default async function middleware(request: NextRequest) {
   try {
@@ -8,11 +8,27 @@ export default async function middleware(request: NextRequest) {
       secret: process.env.AUTH_SECRET,
       secureCookie: process.env.NODE_ENV === "production",
     });
+    console.log("token", token);
 
-    const adminRoutes = ["/posts/create", "/posts/update"];
+    const protectedRoutes = [
+      "/posts/create",
+      "/posts/update",
+      "/dashboard",
+      "/profile",
+      "/settings",
+    ];
     const authRoute = "/sign-in";
-    const publicRoutes = ["/", "/blog"];
+    const publicRoutes = ["/", "/blog", "/about", "/contact"];
     const { pathname } = request.nextUrl;
+
+    if (
+      pathname.startsWith("/api/") ||
+      pathname.startsWith("/_next/") ||
+      pathname.startsWith("/favicon.ico") ||
+      pathname.includes(".")
+    ) {
+      return NextResponse.next();
+    }
 
     const isPublicRoute = publicRoutes.some(
       (route) => pathname === route || pathname.startsWith(`${route}/`)
@@ -22,41 +38,38 @@ export default async function middleware(request: NextRequest) {
       return NextResponse.next();
     }
 
-    if (
-      pathname.startsWith("/api/") ||
-      pathname.startsWith("/_next/") ||
-      pathname.startsWith("/favicon.ico")
-    ) {
-      return NextResponse.next();
-    }
-
     if (pathname.startsWith(authRoute)) {
       if (token) {
-        return NextResponse.redirect(new URL("/", request.url));
+        console.log("User already logged in, redirecting to dashboard");
+        return NextResponse.redirect(new URL("/dashboard", request.url));
       }
       return NextResponse.next();
     }
 
-    const isAdminRoute = adminRoutes.some((route) =>
+    const isProtectedRoute = protectedRoutes.some((route) =>
       pathname.startsWith(route)
     );
 
-    if (isAdminRoute) {
+    if (isProtectedRoute) {
       if (!token) {
+        console.log("No token for protected route, redirecting to sign-in");
         return NextResponse.redirect(new URL(authRoute, request.url));
       }
-      if (!token.isAdmin) {
-        return NextResponse.redirect(new URL("/", request.url));
-      }
+      return NextResponse.next();
+    }
+
+    if (!token) {
+      console.log("No token for other route, redirecting to sign-in");
+      return NextResponse.redirect(new URL(authRoute, request.url));
     }
 
     return NextResponse.next();
   } catch (error) {
     console.error("Middleware error:", error);
-    return NextResponse.next();
+    return NextResponse.redirect(new URL("/sign-in", request.url));
   }
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)"],
 };
