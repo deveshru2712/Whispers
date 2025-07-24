@@ -11,7 +11,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   }),
   callbacks: {
     async session({ session, user }) {
-      const signingSecret = process.env.SUPABASE_JWT_SECRET;
+      const signingSecret = process.env.SUPABASE_JWT_SECRET!;
       if (signingSecret) {
         const payload = {
           aud: "authenticated",
@@ -23,6 +23,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.supabaseAccessToken = jwt.sign(payload, signingSecret);
       }
       return session;
+    },
+  },
+  session: {
+    strategy: "database",
+  },
+  cookies: {
+    sessionToken: {
+      name: `${
+        process.env.NODE_ENV === "production" ? "__Secure-" : ""
+      }next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      },
     },
   },
   pages: {

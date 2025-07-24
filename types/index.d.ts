@@ -12,7 +12,7 @@ declare module "next-auth" {
 declare global {
   interface createPostsProps {
     title: string;
-    post: string;
+    content: string;
   }
 
   interface PostCardProps {

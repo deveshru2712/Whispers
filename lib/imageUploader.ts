@@ -1,4 +1,4 @@
-import { createSupaBaseClient } from "./supabase";
+import { createSupabaseClient } from "./supabase";
 
 const imageUploader = async ({
   userId,
@@ -13,7 +13,7 @@ const imageUploader = async ({
   const fileName = `${timestamp}.${fileExt}`;
   const filePath = `users/${userId}/${fileName}`;
 
-  const supabase = createSupaBaseClient();
+  const supabase = await createSupabaseClient(true);
 
   const { error: uploadError } = await supabase.storage
     .from("post-images")

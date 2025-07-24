@@ -1,14 +1,15 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getToken } from "next-auth/jwt";
 
 export default async function middleware(request: NextRequest) {
   try {
-    const token = await getToken({
-      req: request,
-      secret: process.env.AUTH_SECRET,
-      secureCookie: process.env.NODE_ENV === "production",
-    });
-    console.log("token", token);
+    const sessionCookieName =
+      process.env.NODE_ENV === "production"
+        ? "__Secure-next-auth.session-token"
+        : "next-auth.session-token";
+
+    const sessionToken = request.cookies.get(sessionCookieName)?.value;
+
+    console.log("Session token from cookie:", sessionToken);
 
     const protectedRoutes = [
       "/posts/create",
@@ -39,7 +40,7 @@ export default async function middleware(request: NextRequest) {
     }
 
     if (pathname.startsWith(authRoute)) {
-      if (token) {
+      if (sessionToken) {
         console.log("User already logged in, redirecting to dashboard");
         return NextResponse.redirect(new URL("/dashboard", request.url));
       }
@@ -51,14 +52,14 @@ export default async function middleware(request: NextRequest) {
     );
 
     if (isProtectedRoute) {
-      if (!token) {
+      if (!sessionToken) {
         console.log("No token for protected route, redirecting to sign-in");
         return NextResponse.redirect(new URL(authRoute, request.url));
       }
       return NextResponse.next();
     }
 
-    if (!token) {
+    if (!sessionToken) {
       console.log("No token for other route, redirecting to sign-in");
       return NextResponse.redirect(new URL(authRoute, request.url));
     }
