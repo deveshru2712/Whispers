@@ -36,8 +36,9 @@ export default function HomePage() {
       await createPosts({ title, content: post });
       toast.success("Post created successfully");
       router.push("/");
+      router.refresh();
     } catch (error) {
-      toast.error("Failed to create post");
+      toast.error("Failed to update the post");
       console.error(error);
     } finally {
       setIsSubmitting(false);

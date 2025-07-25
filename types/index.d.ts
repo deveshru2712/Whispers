@@ -15,6 +15,12 @@ declare global {
     content: string;
   }
 
+  interface updatePostsProps {
+    title: string;
+    content: string;
+    blog_id: string;
+  }
+
   interface PostCardProps {
     id: string;
     title: string;

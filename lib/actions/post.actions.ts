@@ -59,3 +59,27 @@ export const fetchPostById = async (postId: string): Promise<Post> => {
 
   return post;
 };
+
+export const updatePosts = async ({
+  title,
+  content,
+  blog_id,
+}: updatePostsProps) => {
+  const session = await auth();
+  if (!session) return null;
+
+  const supabase = createSupabaseAuthenticatedClient(session);
+
+  const { data, error: updateError } = await supabase
+    .from("blogs")
+    .update({ title, content })
+    .eq("id", blog_id)
+    .select();
+
+  if (updateError) {
+    console.log(updateError);
+    throw new Error(updateError?.message || "Failed to update the post");
+  }
+
+  return data;
+};
