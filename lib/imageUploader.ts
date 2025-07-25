@@ -1,7 +1,7 @@
-import { createSupaBaseClient } from "./supabase";
+import { createSupabaseAuthenticatedClient } from "./supabase";
 
 const imageUploader = async ({
-  userId,
+  session,
   file,
 }: ImageUploaderProps): Promise<UploadResult> => {
   const fileExt = file.name.split(".").pop();
@@ -11,9 +11,9 @@ const imageUploader = async ({
 
   const timestamp = Date.now();
   const fileName = `${timestamp}.${fileExt}`;
-  const filePath = `users/${userId}/${fileName}`;
+  const filePath = `users/${session.user.id}/${fileName}`;
 
-  const supabase = createSupaBaseClient();
+  const supabase = createSupabaseAuthenticatedClient(session);
 
   const { error: uploadError } = await supabase.storage
     .from("post-images")

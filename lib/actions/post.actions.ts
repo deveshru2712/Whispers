@@ -1,18 +1,22 @@
 "use server";
 import { auth } from "@/auth";
-import { createSupaBaseClient } from "../supabase";
+import {
+  createSupabaseClient,
+  createSupabaseAuthenticatedClient,
+} from "../supabase";
 
-export const createPosts = async ({ title, post }: createPostsProps) => {
+export const createPosts = async ({ title, content }: createPostsProps) => {
   const session = await auth();
-  const supabase = createSupaBaseClient();
 
-  if (!session || !session.user || !session.user.id || !session.user.isAdmin) {
+  if (!session) {
     return null;
   }
 
+  const supabase = createSupabaseAuthenticatedClient(session);
+
   const { data: blogData, error: blogError } = await supabase
     .from("blogs")
-    .insert({ post, title, user_id: session.user.id })
+    .insert({ content, title, user_id: session.user.id })
     .select();
 
   if (blogError || !blogData) {
@@ -26,7 +30,7 @@ export const createPosts = async ({ title, post }: createPostsProps) => {
 };
 
 export const fetchPosts = async (page = 1, limit = 9): Promise<Post[]> => {
-  const supabase = createSupaBaseClient();
+  const supabase = createSupabaseClient();
 
   const query = supabase.from("blogs").select();
   query.range((page - 1) * limit, page * limit - 1);
@@ -40,7 +44,7 @@ export const fetchPosts = async (page = 1, limit = 9): Promise<Post[]> => {
 };
 
 export const fetchPostById = async (postId: string): Promise<Post> => {
-  const supabase = createSupaBaseClient();
+  const supabase = createSupabaseClient();
 
   const { data: post, error } = await supabase
     .from("blogs")
@@ -54,4 +58,28 @@ export const fetchPostById = async (postId: string): Promise<Post> => {
   }
 
   return post;
+};
+
+export const updatePosts = async ({
+  title,
+  content,
+  blog_id,
+}: updatePostsProps) => {
+  const session = await auth();
+  if (!session) return null;
+
+  const supabase = createSupabaseAuthenticatedClient(session);
+
+  const { data, error: updateError } = await supabase
+    .from("blogs")
+    .update({ title, content })
+    .eq("id", blog_id)
+    .select();
+
+  if (updateError) {
+    console.log(updateError);
+    throw new Error(updateError?.message || "Failed to update the post");
+  }
+
+  return data;
 };

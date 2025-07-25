@@ -53,6 +53,7 @@ import { useWindowSize } from "@/hooks/use-window-size";
 import { useCursorVisibility } from "@/hooks/use-cursor-visibility";
 import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
 import "@/components/tiptap-templates/simple/simple-editor.scss";
+import { type Session } from "next-auth";
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -144,14 +145,14 @@ interface SimpleEditorProps {
   post: string;
   OnChange?: (post: string) => void;
   isEditable?: boolean;
-  userId?: string;
+  session?: Session;
 }
 
 export function SimpleEditor({
   post,
   OnChange,
   isEditable = true,
-  userId,
+  session,
 }: SimpleEditorProps) {
   const isMobile = useMobile();
   const windowSize = useWindowSize();
@@ -187,7 +188,7 @@ export function SimpleEditor({
         accept: "image/*",
         maxSize: MAX_FILE_SIZE,
         limit: 3,
-        upload: handleImageUpload(userId),
+        upload: handleImageUpload(session),
         onError: (error) => console.error("Upload failed:", error),
       }),
       TrailingNode,

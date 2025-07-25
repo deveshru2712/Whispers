@@ -15,7 +15,7 @@ export default async function HomePage() {
       <Navbar />
 
       <main className="flex-1 container mx-auto px-4 py-8">
-        {session?.user.isAdmin && (
+        {session?.user && (
           <div className="text-center max-w-2xl mx-auto mb-12">
             <h1 className="text-3xl md:text-4xl font-bold mb-4">
               Welcome back{session.user.name ? ` ${session.user.name}` : ""}.
@@ -28,25 +28,26 @@ export default async function HomePage() {
         )}
 
         {posts.length > 0 ? (
-          <div className="max-w-xl mx-auto flex flex-col items-start space-y-1.5">
+          <div className="mx-auto max-w-3xl flex flex-col  items-center space-y-1.5">
             {posts.map((post) => (
               <PostCard
                 key={post.id}
                 id={post.id}
-                createdAt={post.createdAt}
+                createdAt={post.created_at}
                 title={post.title}
+                is_mine={post.user_id == session?.user.id}
               />
             ))}
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <h2 className="text-2xl font-bold mb-4 text-slate-900 dark:text-slate-100">
-              {session?.user.isAdmin
+              {session?.user
                 ? "No posts yet - time to create something amazing!"
                 : "No posts available yet"}
             </h2>
             <p className="text-muted-foreground mb-6">
-              {session?.user.isAdmin
+              {session?.user
                 ? "Your audience is waiting for your content!"
                 : "Check back later for updates"}
             </p>
@@ -54,7 +55,7 @@ export default async function HomePage() {
         )}
       </main>
 
-      {session?.user.isAdmin && (
+      {session?.user && (
         <div className="fixed bottom-6 right-6">
           <Button
             asChild

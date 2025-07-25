@@ -1,40 +1,39 @@
-import { DefaultSession, DefaultUser } from "next-auth";
+import { type DefaultSession } from "next-auth";
 
 declare module "next-auth" {
-  interface Session extends DefaultSession {
+  interface Session {
+    supabaseAccessToken?: string;
     user: {
-      id: string;
-      isAdmin: boolean;
+      address: string;
     } & DefaultSession["user"];
-  }
-
-  interface User extends DefaultUser {
-    isAdmin?: boolean;
-  }
-
-  interface JWT {
-    id: string;
-    isAdmin: boolean;
   }
 }
 
 declare global {
   interface createPostsProps {
     title: string;
-    post: string;
+    content: string;
+  }
+
+  interface updatePostsProps {
+    title: string;
+    content: string;
+    blog_id: string;
   }
 
   interface PostCardProps {
     id: string;
     title: string;
     createdAt: Date | string;
+    is_mine: boolean;
   }
 
   interface Post {
     id: string;
     title: string;
-    post: string;
+    content: string;
     created_at: Date;
+    user_id: string;
   }
 
   interface PostPage {
@@ -43,12 +42,12 @@ declare global {
     }>;
   }
 
-  export interface ImageUploaderProps {
-    userId: string;
+  interface ImageUploaderProps {
+    session: import("next-auth").Session;
     file: File;
   }
 
-  export interface UploadResult {
+  interface UploadResult {
     path: string;
     publicUrl: string;
   }

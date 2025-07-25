@@ -32,7 +32,7 @@ export default async function Page({ params }: PostPage) {
             </header>
 
             <div className="bg-white/80 dark:bg-white/5 rounded-md shadow dark:shadow-2xl">
-              <SimpleEditor post={post.post} isEditable={false} />
+              <SimpleEditor post={post.content} isEditable={false} />
             </div>
           </article>
         </div>
