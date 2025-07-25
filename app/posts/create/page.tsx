@@ -11,7 +11,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 export default function HomePage() {
-  const [post, setPost] = useState("");
+  const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -21,19 +21,18 @@ export default function HomePage() {
   const router = useRouter();
 
   const onChange = (post: string) => {
-    setPost(post);
+    setContent(post);
   };
 
   const handleSubmit = async () => {
-    if (!title.trim() || !post.trim()) {
+    if (!title.trim() || !content.trim()) {
       toast.error("Please add a title and content before publishing");
       return;
     }
 
     try {
       setIsSubmitting(true);
-      console.log(title, post);
-      await createPosts({ title, content: post });
+      await createPosts({ title, content });
       toast.success("Post created successfully");
       router.push("/");
     } catch (error) {
@@ -45,10 +44,10 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    if (buttonRef.current && post) {
+    if (buttonRef.current && content) {
       buttonRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
     }
-  }, [post]);
+  }, [content]);
 
   return (
     <main className="container relative mx-auto px-4 pt-26 pb-32">
@@ -78,7 +77,7 @@ export default function HomePage() {
 
           <div className="min-h-[400px]">
             <SimpleEditor
-              post={post}
+              content={content}
               OnChange={onChange}
               session={session ? session : undefined}
             />
@@ -88,7 +87,7 @@ export default function HomePage() {
         <Button
           ref={buttonRef}
           onClick={handleSubmit}
-          disabled={isSubmitting || !post.trim() || !title.trim()}
+          disabled={isSubmitting || !content.trim() || !title.trim()}
           className="cursor-pointer fixed bottom-10 right-10 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-md shadow-lg transition-all z-50"
           aria-label="Publish post"
         >

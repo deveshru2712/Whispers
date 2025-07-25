@@ -142,14 +142,14 @@ const MobileToolbarContent = ({
 );
 
 interface SimpleEditorProps {
-  post: string;
+  content: string;
   OnChange?: (post: string) => void;
   isEditable?: boolean;
   session?: Session;
 }
 
 export function SimpleEditor({
-  post,
+  content,
   OnChange,
   isEditable = true,
   session,
@@ -194,7 +194,7 @@ export function SimpleEditor({
       TrailingNode,
       Link.configure({ openOnClick: false }),
     ],
-    content: post,
+    content: content || "<p>This is sample text.</p>",
     onUpdate: ({ editor }) => {
       if (OnChange) {
         OnChange(editor.getHTML());

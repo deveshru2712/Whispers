@@ -28,7 +28,7 @@ export default async function HomePage() {
         )}
 
         {posts.length > 0 ? (
-          <div className="mx-auto max-w-3xl flex flex-col  items-center space-y-1.5">
+          <div className="mx-auto max-w-4xl flex flex-col items-center space-y-1.5">
             {posts.map((post) => (
               <PostCard
                 key={post.id}

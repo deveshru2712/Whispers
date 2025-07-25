@@ -1,55 +1,88 @@
 "use client";
+import Loader from "@/components/Loader";
 import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createPosts } from "@/lib/actions/post.actions";
+import { fetchPostById, updatePosts } from "@/lib/actions/post.actions";
 import { BookCheck } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 export default function HomePage() {
-  const [post, setPost] = useState("");
+  const params = useParams();
+  const router = useRouter();
+  const id = params.id as string;
+
+  const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [originalContent, setOriginalContent] = useState("");
+  const [originalTitle, setOriginalTitle] = useState("");
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [loading, setIsLoading] = useState(true);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   const { data: session } = useSession();
 
-  const router = useRouter();
+  useEffect(() => {
+    const getPost = async () => {
+      if (!id) {
+        setIsLoading(false);
+        return;
+      }
+      try {
+        const blog = await fetchPostById(id);
+        setContent(blog.content);
+        setTitle(blog.title);
+        setOriginalContent(blog.content);
+        setOriginalTitle(blog.title);
+      } catch (error) {
+        console.error("Failed to fetch post:", error);
+        toast.error("Failed to load post");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    getPost();
+  }, [id]);
 
   const onChange = (post: string) => {
-    setPost(post);
+    setContent(post);
   };
 
   const handleSubmit = async () => {
-    if (!title.trim() || !post.trim()) {
+    if (!title.trim() || !content.trim()) {
       toast.error("Please add a title and content before publishing");
       return;
     }
 
     try {
-      setIsSubmitting(true);
-      console.log(title, post);
-      await createPosts({ title, content: post });
-      toast.success("Post created successfully");
+      setIsUpdating(true);
+      await updatePosts({ blog_id: id, title, content: content });
+      toast.success("Post updated successfully");
       router.push("/");
-      router.refresh();
     } catch (error) {
       toast.error("Failed to update the post");
       console.error(error);
     } finally {
-      setIsSubmitting(false);
+      setIsUpdating(false);
     }
   };
 
   useEffect(() => {
-    if (buttonRef.current && post) {
+    if (buttonRef.current && content) {
       buttonRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
     }
-  }, [post]);
+  }, [content]);
+
+  // Check if content or title has changed from original
+  const hasChanges = content !== originalContent || title !== originalTitle;
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <main className="container relative mx-auto px-4 pt-26 pb-32">
@@ -76,7 +109,7 @@ export default function HomePage() {
 
           <div className="min-h-[400px]">
             <SimpleEditor
-              post={post}
+              content={content}
               OnChange={onChange}
               session={session ? session : undefined}
             />
@@ -86,12 +119,13 @@ export default function HomePage() {
         <Button
           ref={buttonRef}
           onClick={handleSubmit}
-          disabled={isSubmitting || !post.trim() || !title.trim()}
+          disabled={
+            isUpdating || !content.trim() || !title.trim() || !hasChanges
+          }
           className="cursor-pointer fixed bottom-10 right-10 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-md shadow-lg transition-all z-50"
-          aria-label="Publish post"
         >
-          {isSubmitting ? (
-            "Publishing..."
+          {isUpdating ? (
+            "Updating..."
           ) : (
             <>
               <BookCheck className="mr-2 h-4 w-4" />
