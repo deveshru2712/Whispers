@@ -24,7 +24,7 @@ declare global {
   interface Post {
     id: string;
     title: string;
-    post: string;
+    content: string;
     created_at: Date;
   }
 

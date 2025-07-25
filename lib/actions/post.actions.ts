@@ -1,14 +1,18 @@
 "use server";
 import { auth } from "@/auth";
-import { createSupabaseClient } from "../supabase";
+import {
+  createSupabaseClient,
+  createSupabaseAuthenticatedClient,
+} from "../supabase";
 
 export const createPosts = async ({ title, content }: createPostsProps) => {
   const session = await auth();
-  const supabase = await createSupabaseClient(true);
 
   if (!session) {
     return null;
   }
+
+  const supabase = createSupabaseAuthenticatedClient(session);
 
   const { data: blogData, error: blogError } = await supabase
     .from("blogs")
@@ -26,7 +30,7 @@ export const createPosts = async ({ title, content }: createPostsProps) => {
 };
 
 export const fetchPosts = async (page = 1, limit = 9): Promise<Post[]> => {
-  const supabase = await createSupabaseClient();
+  const supabase = createSupabaseClient();
 
   const query = supabase.from("blogs").select();
   query.range((page - 1) * limit, page * limit - 1);
@@ -40,7 +44,7 @@ export const fetchPosts = async (page = 1, limit = 9): Promise<Post[]> => {
 };
 
 export const fetchPostById = async (postId: string): Promise<Post> => {
-  const supabase = await createSupabaseClient();
+  const supabase = createSupabaseClient();
 
   const { data: post, error } = await supabase
     .from("blogs")

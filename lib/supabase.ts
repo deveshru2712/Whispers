@@ -1,41 +1,41 @@
-import { auth } from "@/auth";
 import { createClient } from "@supabase/supabase-js";
+import { type Session } from "next-auth";
 
-export const createSupabaseClient = async (requireAuth: boolean = false) => {
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
-    throw new Error("NEXT_PUBLIC_SUPABASE_URL is not set");
+export const createSupabaseClient = () => {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error(`Missing Supabase environment variables:
+      URL: ${supabaseUrl ? "✓" : "✗"} 
+      KEY: ${supabaseKey ? "✓" : "✗"}
+    `);
   }
 
-  if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    throw new Error("NEXT_PUBLIC_SUPABASE_ANON_KEY is not set");
+  return createClient(supabaseUrl, supabaseKey);
+};
+
+export const createSupabaseAuthenticatedClient = (session: Session) => {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error(`Missing Supabase environment variables:
+      URL: ${supabaseUrl ? "✓" : "✗"} 
+      KEY: ${supabaseKey ? "✓" : "✗"}
+    `);
   }
 
-  let session = null;
-  if (requireAuth) {
-    session = await auth();
-    if (!session) {
-      throw new Error("Authentication required but no valid session found");
-    }
-
-    if (!session.supabaseAccessToken) {
-      throw new Error("Session found but missing supabaseAccessToken");
-    }
+  if (!session?.supabaseAccessToken) {
+    console.warn("No supabaseAccessToken found in session");
+    return createClient(supabaseUrl, supabaseKey);
   }
 
-  const options =
-    requireAuth && session
-      ? {
-          global: {
-            headers: {
-              Authorization: `Bearer ${session.supabaseAccessToken}`,
-            },
-          },
-        }
-      : undefined;
-
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    options
-  );
+  return createClient(supabaseUrl, supabaseKey, {
+    global: {
+      headers: {
+        Authorization: `Bearer ${session.supabaseAccessToken}`,
+      },
+    },
+  });
 };

@@ -32,6 +32,7 @@ export default function HomePage() {
 
     try {
       setIsSubmitting(true);
+      console.log(title, post);
       await createPosts({ title, content: post });
       toast.success("Post created successfully");
       router.push("/");
