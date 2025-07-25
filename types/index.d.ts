@@ -19,6 +19,7 @@ declare global {
     id: string;
     title: string;
     createdAt: Date | string;
+    is_mine: boolean;
   }
 
   interface Post {
@@ -26,6 +27,7 @@ declare global {
     title: string;
     content: string;
     created_at: Date;
+    user_id: string;
   }
 
   interface PostPage {
@@ -35,7 +37,7 @@ declare global {
   }
 
   interface ImageUploaderProps {
-    userId: string;
+    session: import("next-auth").Session;
     file: File;
   }
 

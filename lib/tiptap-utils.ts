@@ -1,6 +1,7 @@
 import type { Attrs, Node } from "@tiptap/pm/model";
 import type { Editor } from "@tiptap/react";
 import imageUploader from "./imageUploader";
+import { type Session } from "next-auth";
 
 export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -136,13 +137,13 @@ export function findNodePosition(props: {
  * @returns Promise resolving to the URL of the uploaded image
  */
 
-export const handleImageUpload = (userId?: string) => {
+export const handleImageUpload = (session?: Session) => {
   return async (
     file: File,
     _onProgress?: (event: { progress: number }) => void,
     abortSignal?: AbortSignal
   ): Promise<string> => {
-    if (!userId) {
+    if (!session) {
       throw new Error("User not authenticated");
     }
 
@@ -160,7 +161,7 @@ export const handleImageUpload = (userId?: string) => {
       throw new Error("Upload cancelled");
     }
 
-    const { publicUrl } = await imageUploader({ userId, file });
+    const { publicUrl } = await imageUploader({ session, file });
     return publicUrl;
   };
 };

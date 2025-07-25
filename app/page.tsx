@@ -28,13 +28,14 @@ export default async function HomePage() {
         )}
 
         {posts.length > 0 ? (
-          <div className="max-w-xl mx-auto flex flex-col items-start space-y-1.5">
+          <div className="mx-auto max-w-3xl flex flex-col  items-center space-y-1.5">
             {posts.map((post) => (
               <PostCard
                 key={post.id}
                 id={post.id}
                 createdAt={post.created_at}
                 title={post.title}
+                is_mine={post.user_id == session?.user.id}
               />
             ))}
           </div>

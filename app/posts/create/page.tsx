@@ -80,7 +80,7 @@ export default function HomePage() {
             <SimpleEditor
               post={post}
               OnChange={onChange}
-              userId={session?.user.id}
+              session={session ? session : undefined}
             />
           </div>
         </div>
