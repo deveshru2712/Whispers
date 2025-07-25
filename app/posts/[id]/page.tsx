@@ -1,12 +1,17 @@
+import { auth } from "@/auth";
 import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
+import { Button } from "@/components/ui/button";
 import { fetchPostById } from "@/lib/actions/post.actions";
 import formatTime from "@/lib/formatTime";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Pencil, Trash } from "lucide-react";
 import Link from "next/link";
 
 export default async function Page({ params }: PostPage) {
+  const session = await auth();
   const { id: postId } = await params;
   const post = await fetchPostById(postId);
+
+  const is_mine = post.user_id == session?.user.id;
 
   return (
     <div className="w-full min-h-screen pb-12">
@@ -35,6 +40,18 @@ export default async function Page({ params }: PostPage) {
               <SimpleEditor content={post.content} isEditable={false} />
             </div>
           </article>
+
+          {is_mine && (
+            <div className="flex flex-col space-y-3 absolute bottom-10 right-10">
+              <Button className="flex gap-1 bg-blue-400 hover:bg-blue-300 transition-all duration-300 px-4 py-1.5 rounded-md text-white font-semibold cursor-pointer">
+                <Pencil /> Update
+              </Button>
+
+              <Button className="flex gap-1 bg-red-500 hover:bg-red-400 transition-all duration-300 px-4 py-1.5 rounded-md text-white font-semibold cursor-pointer">
+                <Trash /> Delete
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>

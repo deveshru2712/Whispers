@@ -1,14 +1,14 @@
 import Link from "next/link";
 import React from "react";
 import dayjs from "dayjs";
-import { MoveUpRight, Pencil } from "lucide-react";
+import { MoveUpRight } from "lucide-react";
 
-const PostCard = ({ id, title, createdAt, is_mine }: PostCardProps) => {
+const PostCard = ({ id, title, createdAt }: PostCardProps) => {
   return (
     <div className="group w-1/2 flex justify-between items-center">
       <Link
         href={`/posts/${id}`}
-        className="block p-4 rounded-lg transition-colors duration-200 relative"
+        className="block p-4 rounded-lg transition-colors duration-200 relative flex-grow"
       >
         <div className="flex justify-between items-center">
           <div className="flex flex-col justify-between h-full text-left">
@@ -29,15 +29,6 @@ const PostCard = ({ id, title, createdAt, is_mine }: PostCardProps) => {
           </div>
         </div>
       </Link>
-
-      {is_mine && (
-        <Link
-          href={`/posts/update/${id}`}
-          className="group-hover:block hidden duration-500 transition-all cursor-pointer"
-        >
-          <Pencil size={16} />
-        </Link>
-      )}
     </div>
   );
 };

@@ -25,7 +25,6 @@ declare global {
     id: string;
     title: string;
     createdAt: Date | string;
-    is_mine: boolean;
   }
 
   interface Post {

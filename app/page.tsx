@@ -35,7 +35,6 @@ export default async function HomePage() {
                 id={post.id}
                 createdAt={post.created_at}
                 title={post.title}
-                is_mine={post.user_id == session?.user.id}
               />
             ))}
           </div>
