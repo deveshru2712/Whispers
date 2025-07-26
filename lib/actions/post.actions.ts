@@ -83,3 +83,20 @@ export const updatePosts = async ({
 
   return data;
 };
+
+export const deletePosts = async ({ blog_id, session }: deletePostProps) => {
+  if (session) return null;
+  const supabase = createSupabaseAuthenticatedClient(session);
+
+  const { error: deleteError } = await supabase
+    .from("blogs")
+    .delete()
+    .eq("id", blog_id);
+
+  if (deleteError) {
+    console.log(deleteError.message);
+    throw new Error(
+      deleteError.message || "Error occurred while deleting the post."
+    );
+  }
+};

@@ -1,23 +1,74 @@
-import { auth } from "@/auth";
+"use client";
+
+import Loader from "@/components/Loader";
 import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
 import { Button } from "@/components/ui/button";
-import { fetchPostById } from "@/lib/actions/post.actions";
+import { deletePosts, fetchPostById } from "@/lib/actions/post.actions";
 import formatTime from "@/lib/formatTime";
 import { ArrowLeft, Pencil, Trash } from "lucide-react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
-export default async function Page({ params }: PostPage) {
-  const session = await auth();
-  const { id: postId } = await params;
-  const post = await fetchPostById(postId);
+export default function Page() {
+  const { data: session } = useSession();
 
-  const is_mine = post.user_id == session?.user.id;
+  const params = useParams();
+  const router = useRouter();
+  const id = params.id as string;
+
+  const [post, setPost] = useState<Post | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const getPost = async () => {
+      try {
+        const postData = await fetchPostById(id);
+        setPost(postData);
+      } catch (error) {
+        console.error("Error fetching post:", error);
+        toast.error("Failed to load post");
+      } finally {
+        setLoading(false);
+      }
+    };
+    getPost();
+  }, [id]);
+
+  const is_mine = post?.user_id === session?.user.id;
+
+  if (loading) {
+    return <Loader />;
+  }
+
+  if (!post) {
+    return (
+      <div className="flex justify-center items-center">
+        <h1 className="text-3xl font-semibold">Post not found.</h1>
+      </div>
+    );
+  }
+
+  const handleDelete = async () => {
+    if (!session) return null;
+
+    try {
+      await deletePosts({ blog_id: post.id, session });
+      toast.success("Post deleted.");
+      router.push("/");
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      toast.error("Failed to delete post");
+    }
+  };
 
   return (
     <div className="w-full min-h-screen pb-12">
-      <div className="max-w-6xl mx-auto px-6  py-6">
+      <div className="max-w-6xl mx-auto px-6 py-6">
         <Link href="/">
-          <button className="cursor-pointer flex items-center px-2 py-1 rounded-md border hover:border-slate-300 dark:border-slate-50/40 hover:dark:border-slate-50/80 shadow-md dark:shadow-2xl transition-all duration-300 text-slate-500 hover:text-slate-700 dark:text-slate-300 hover:dark:text-slate-50  ">
+          <button className="cursor-pointer flex items-center px-2 py-1 rounded-md border hover:border-slate-300 dark:border-slate-50/40 hover:dark:border-slate-50/80 shadow-md dark:shadow-2xl transition-all duration-300 text-slate-500 hover:text-slate-700 dark:text-slate-300 hover:dark:text-slate-50">
             <ArrowLeft size={20} />
             <span className="font-semibold pl-1">Back</span>
           </button>
@@ -42,12 +93,18 @@ export default async function Page({ params }: PostPage) {
           </article>
 
           {is_mine && (
-            <div className="flex flex-col space-y-3 absolute bottom-10 right-10">
-              <Button className="flex gap-1 bg-blue-400 hover:bg-blue-300 transition-all duration-300 px-4 py-1.5 rounded-md text-white font-semibold cursor-pointer">
+            <div className="flex flex-col space-y-3 fixed bottom-10 right-10">
+              <Link
+                href={`/posts/update/${post.id}`}
+                className="flex gap-1 bg-blue-400 hover:bg-blue-300 transition-all duration-300 px-4 py-1.5 rounded-md text-white font-semibold cursor-pointer"
+              >
                 <Pencil /> Update
-              </Button>
+              </Link>
 
-              <Button className="flex gap-1 bg-red-500 hover:bg-red-400 transition-all duration-300 px-4 py-1.5 rounded-md text-white font-semibold cursor-pointer">
+              <Button
+                onClick={handleDelete}
+                className="flex gap-1 bg-red-500 hover:bg-red-400 transition-all duration-300 px-4 py-1.5 rounded-md text-white font-semibold cursor-pointer"
+              >
                 <Trash /> Delete
               </Button>
             </div>

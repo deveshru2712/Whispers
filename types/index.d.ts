@@ -50,4 +50,9 @@ declare global {
     path: string;
     publicUrl: string;
   }
+
+  interface deletePostProps {
+    session: import("next-auth").Session;
+    blog_id: string;
+  }
 }
