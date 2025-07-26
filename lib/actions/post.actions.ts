@@ -4,6 +4,7 @@ import {
   createSupabaseClient,
   createSupabaseAuthenticatedClient,
 } from "../supabase";
+import dayjs from "dayjs";
 
 export const createPosts = async ({ title, content }: createPostsProps) => {
   const session = await auth();
@@ -85,13 +86,16 @@ export const updatePosts = async ({
 };
 
 export const deletePosts = async ({ blog_id, session }: deletePostProps) => {
-  if (session) return null;
+  if (!session) return null;
+  if (!blog_id) return null;
+
   const supabase = createSupabaseAuthenticatedClient(session);
 
-  const { error: deleteError } = await supabase
+  const { data, error: deleteError } = await supabase
     .from("blogs")
     .delete()
-    .eq("id", blog_id);
+    .eq("id", blog_id)
+    .select();
 
   if (deleteError) {
     console.log(deleteError.message);
@@ -99,4 +103,6 @@ export const deletePosts = async ({ blog_id, session }: deletePostProps) => {
       deleteError.message || "Error occurred while deleting the post."
     );
   }
+
+  return data;
 };
