@@ -1,8 +1,8 @@
 import { createSupabaseAuthenticatedClient } from "./supabase";
 
-const imageUploader = async ({
-  session,
+const supabaseImageUploader = async ({
   file,
+  session,
 }: ImageUploaderProps): Promise<UploadResult> => {
   const fileExt = file.name.split(".").pop();
   if (!fileExt) {
@@ -28,10 +28,12 @@ const imageUploader = async ({
     data: { publicUrl },
   } = supabase.storage.from("post-images").getPublicUrl(filePath);
 
+  console.log("here is the public url", publicUrl);
+
   return {
     path: filePath,
     publicUrl: publicUrl,
   };
 };
 
-export default imageUploader;
+export default supabaseImageUploader;

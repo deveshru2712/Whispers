@@ -236,7 +236,7 @@ export function SimpleEditor({
         accept: "image/*",
         maxSize: MAX_FILE_SIZE,
         limit: 3,
-        upload: handleImageUpload,
+        upload: (file: File) => handleImageUpload(file, session),
         onError: (error) => console.error("Upload failed:", error),
       }),
     ],
@@ -257,7 +257,7 @@ export function SimpleEditor({
       setMobileView("main");
     }
   }, [isMobile, mobileView]);
-
+  console.log("editor", session?.user.id);
   return (
     <div className="simple-editor-wrapper">
       <EditorContext.Provider value={{ editor }}>
