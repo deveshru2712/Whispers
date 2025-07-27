@@ -78,7 +78,7 @@ export default function HomePage() {
           <div className="min-h-[400px]">
             <SimpleEditor
               content={content}
-              OnChange={onChange}
+              onChange={onChange}
               session={session ? session : undefined}
             />
           </div>

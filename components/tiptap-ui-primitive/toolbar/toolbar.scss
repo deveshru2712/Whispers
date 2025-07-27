@@ -13,7 +13,6 @@
 .tiptap-toolbar {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 0.25rem;
 
   &-group {
@@ -90,7 +89,7 @@
       background-color: transparent;
     }
 
-    @media screen and (max-width: 768px) {
+    @media screen and (max-width: 480px) {
       width: 100%;
       border-radius: 0;
       border: none;
