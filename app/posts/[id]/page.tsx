@@ -77,9 +77,9 @@ export default function Page() {
 
       <div className="max-w-3xl mx-auto w-full px-8 md:px-4 lg:px-0">
         <div>
-          <article className="flex flex-col gap-6">
+          <div className="flex flex-col gap-6">
             <header className="flex flex-col gap-2">
-              <h1 className="text-4xl font-bold tracking-tight leading-tight hover:opacity-90 transition-opacity">
+              <h1 className="text-3xl font-bold tracking-tight leading-tight hover:opacity-90 transition-opacity break-words overflow-hidden">
                 {post.title}
               </h1>
               <p className="text-sm opacity-75">
@@ -90,7 +90,7 @@ export default function Page() {
             <div className="bg-white/80 dark:bg-white/5 rounded-md shadow dark:shadow-2xl">
               <SimpleEditor content={post.content} isEditable={false} />
             </div>
-          </article>
+          </div>
 
           {is_mine && (
             <div className="flex flex-col space-y-3 fixed bottom-10 right-10">
