@@ -65,7 +65,7 @@ import { useWindowSize } from "@/hooks/use-window-size";
 import { useCursorVisibility } from "@/hooks/use-cursor-visibility";
 
 // --- Components ---
-import { ThemeToggle } from "@/components/tiptap-templates/simple/theme-toggle";
+// import { ThemeToggle } from "@/components/tiptap-templates/simple/theme-toggle";
 
 // --- Lib ---
 import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
@@ -148,9 +148,9 @@ const MainToolbarContent = ({
 
       {isMobile && <ToolbarSeparator />}
 
-      <ToolbarGroup>
+      {/*  <ToolbarGroup>
         <ThemeToggle />
-      </ToolbarGroup>
+      </ToolbarGroup> */}
     </>
   );
 };
@@ -186,14 +186,16 @@ const MobileToolbarContent = ({
 
 interface SimpleEditorProps {
   content: string;
-  onChange: (content: string) => void;
+  onChange?: (content: string) => void;
   session?: Session;
+  isEditable: boolean;
 }
 
 export function SimpleEditor({
   content,
   onChange,
   session,
+  isEditable = true,
 }: SimpleEditorProps) {
   const isMobile = useIsMobile();
   const windowSize = useWindowSize();
@@ -201,6 +203,8 @@ export function SimpleEditor({
     "main" | "highlighter" | "link"
   >("main");
   const toolbarRef = React.useRef<HTMLDivElement>(null);
+
+  console.log("Session when creating editor:", session?.user.id);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -234,16 +238,20 @@ export function SimpleEditor({
       Selection,
       ImageUploadNode.configure({
         accept: "image/*",
+        session: isEditable ? session : undefined,
         maxSize: MAX_FILE_SIZE,
         limit: 3,
-        upload: (file: File) => handleImageUpload(file, session),
+        upload: isEditable ? handleImageUpload : undefined,
         onError: (error) => console.error("Upload failed:", error),
       }),
     ],
+    editable: isEditable,
     content: content,
     onUpdate: ({ editor }) => {
       if (!editor) return null;
-      onChange(editor.getHTML());
+      if (onChange) {
+        onChange(editor.getHTML());
+      }
     },
   });
 
@@ -257,33 +265,35 @@ export function SimpleEditor({
       setMobileView("main");
     }
   }, [isMobile, mobileView]);
-  console.log("editor", session?.user.id);
+
   return (
     <div className="simple-editor-wrapper">
       <EditorContext.Provider value={{ editor }}>
-        <Toolbar
-          ref={toolbarRef}
-          style={
-            isMobile
-              ? {
-                  bottom: `calc(100% - ${windowSize.height - bodyRect.y}px)`,
-                }
-              : {}
-          }
-        >
-          {mobileView === "main" ? (
-            <MainToolbarContent
-              onHighlighterClick={() => setMobileView("highlighter")}
-              onLinkClick={() => setMobileView("link")}
-              isMobile={isMobile}
-            />
-          ) : (
-            <MobileToolbarContent
-              type={mobileView === "highlighter" ? "highlighter" : "link"}
-              onBack={() => setMobileView("main")}
-            />
-          )}
-        </Toolbar>
+        {isEditable && (
+          <Toolbar
+            ref={toolbarRef}
+            style={
+              isMobile
+                ? {
+                    bottom: `calc(100% - ${windowSize.height - bodyRect.y}px)`,
+                  }
+                : {}
+            }
+          >
+            {mobileView === "main" ? (
+              <MainToolbarContent
+                onHighlighterClick={() => setMobileView("highlighter")}
+                onLinkClick={() => setMobileView("link")}
+                isMobile={isMobile}
+              />
+            ) : (
+              <MobileToolbarContent
+                type={mobileView === "highlighter" ? "highlighter" : "link"}
+                onBack={() => setMobileView("main")}
+              />
+            )}
+          </Toolbar>
+        )}
 
         <EditorContent
           editor={editor}
