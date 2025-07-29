@@ -10,5 +10,8 @@ declare namespace NodeJS {
     SUPABASE_JWT_SECRET: string;
 
     SUPABASE_SERVICE_ROLE_KEY: string;
+
+    NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: string;
+    NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET: string;
   }
 }

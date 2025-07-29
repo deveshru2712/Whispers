@@ -49,6 +49,7 @@ export default function HomePage() {
   }, [id]);
 
   const onChange = (post: string) => {
+    console.log(post);
     setContent(post);
   };
 

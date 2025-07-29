@@ -1,8 +1,6 @@
 import type { Node as TiptapNode } from "@tiptap/pm/model";
 import { NodeSelection } from "@tiptap/pm/state";
 import type { Editor } from "@tiptap/react";
-import { type Session } from "next-auth";
-import supabaseImageUploader from "./imageUploader";
 
 export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -259,36 +257,71 @@ export function isNodeTypeSelected(
  */
 export const handleImageUpload = async (
   file: File,
-  session: Session | undefined,
   onProgress?: (event: { progress: number }) => void,
   abortSignal?: AbortSignal
 ): Promise<string> => {
   // Validate file
-  if (!file) {
-    throw new Error("No file provided");
-  }
-  console.log("file uploader", session?.user.id);
-
+  if (!file) throw new Error("No file provided");
   if (file.size > MAX_FILE_SIZE) {
-    throw new Error(
-      `File size exceeds maximum allowed (${MAX_FILE_SIZE / (1024 * 1024)}MB)`
+    throw new Error(`File exceeds ${MAX_FILE_SIZE / (1024 * 1024)}MB limit`);
+  }
+
+  if (abortSignal?.aborted) throw new Error("Upload cancelled");
+
+  try {
+    const dataUri = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => reject(new Error("Failed to read file"));
+
+      reader.readAsDataURL(file);
+    });
+
+    for (let progress = 0; progress <= 50; progress += 10) {
+      if (abortSignal?.aborted) throw new Error("Upload cancelled");
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      onProgress?.({ progress });
+    }
+
+    console.log("cloud name", process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME!);
+    console.log(
+      "upload preset",
+      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!
     );
-  }
 
-  if (!session) {
-    throw new Error("Unauthorized to upload the image");
-  }
+    const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`;
 
-  for (let progress = 0; progress <= 100; progress += 10) {
-    if (abortSignal?.aborted) {
+    const formData = new FormData();
+    formData.append("file", dataUri);
+    formData.append(
+      "upload_preset",
+      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!
+    );
+
+    const response = await fetch(cloudinaryUrl, {
+      method: "POST",
+      body: formData,
+      signal: abortSignal, // Supports proper aborting
+    });
+
+    if (!response.ok) throw new Error(`Upload failed: ${response.statusText}`);
+
+    const result = await response.json();
+    onProgress?.({ progress: 100 });
+
+    return result.secure_url;
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
       throw new Error("Upload cancelled");
     }
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    onProgress?.({ progress });
-  }
 
-  const url = await supabaseImageUploader({ file, session });
-  return url.publicUrl;
+    if (error instanceof Error) {
+      throw new Error(`Upload failed: ${error.message}`);
+    }
+
+    throw new Error("Upload failed due to an unknown error");
+  }
 };
 
 type ProtocolOptions = {

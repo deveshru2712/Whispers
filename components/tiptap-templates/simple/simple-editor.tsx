@@ -238,7 +238,6 @@ export function SimpleEditor({
       Selection,
       ImageUploadNode.configure({
         accept: "image/*",
-        session: isEditable ? session : undefined,
         maxSize: MAX_FILE_SIZE,
         limit: 3,
         upload: isEditable ? handleImageUpload : undefined,
