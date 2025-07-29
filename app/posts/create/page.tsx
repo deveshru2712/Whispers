@@ -21,7 +21,6 @@ export default function HomePage() {
   const router = useRouter();
 
   const onChange = (post: string) => {
-    console.log(post);
     setContent(post);
   };
 

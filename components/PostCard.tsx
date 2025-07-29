@@ -5,15 +5,18 @@ import { MoveUpRight } from "lucide-react";
 
 const PostCard = ({ id, title, createdAt }: PostCardProps) => {
   return (
-    <div className="group w-2/3 flex justify-between items-center">
+    <div className="group w-full md:w-2/3 flex justify-between items-center">
       <Link
         href={`/posts/${id}`}
         className="block p-4 rounded-lg transition-colors duration-200 relative flex-grow"
       >
-        <div className="flex justify-between items-center">
+        <div className="ml-4 flex justify-between items-center">
           <div className="flex flex-col justify-between h-full text-left">
-            <div className="w-full text-xl font-semibold">
+            <div className="hidden md:block w-full text-xl font-semibold">
               {title.length > 60 ? title.slice(0, 60) + "..." : title}
+            </div>
+            <div className="block md:hidden w-full text-normal font-semibold">
+              {title.length > 60 ? title.slice(0, 40) + "..." : title}
             </div>
             <div className="absoulte border group-hover:border-slate-900/20 group-hover:dark:border-slate-50/30 border-transparent -mt-0.5 transition-colors duration-300" />
 
