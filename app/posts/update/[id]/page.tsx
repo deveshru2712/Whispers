@@ -49,6 +49,7 @@ export default function HomePage() {
   }, [id]);
 
   const onChange = (post: string) => {
+    console.log(post);
     setContent(post);
   };
 
@@ -109,8 +110,9 @@ export default function HomePage() {
 
           <div className="min-h-[400px]">
             <SimpleEditor
+              isEditable={true}
               content={content}
-              OnChange={onChange}
+              onChange={onChange}
               session={session ? session : undefined}
             />
           </div>

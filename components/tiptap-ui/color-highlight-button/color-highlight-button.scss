@@ -28,7 +28,6 @@
 }
 
 .tiptap-button {
-  cursor: pointer;
   &[data-active-state="on"] {
     .tiptap-button-highlight {
       &::after {
