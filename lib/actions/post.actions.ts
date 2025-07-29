@@ -4,7 +4,6 @@ import {
   createSupabaseClient,
   createSupabaseAuthenticatedClient,
 } from "../supabase";
-import dayjs from "dayjs";
 
 export const createPosts = async ({ title, content }: createPostsProps) => {
   const session = await auth();
