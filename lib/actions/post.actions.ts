@@ -106,7 +106,9 @@ export const deletePosts = async ({ blog_id, session }: deletePostProps) => {
   return data;
 };
 
-export const fetchPostByUser = async (userId: string) => {
+export const fetchPostByUser = async (
+  userId: string
+): Promise<Post[] | null> => {
   if (!userId) return null;
 
   const supabase = createSupabaseClient();

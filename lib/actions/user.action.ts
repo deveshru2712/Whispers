@@ -2,7 +2,7 @@
 
 import { createSupabaseClient } from "../supabase";
 
-export const getUserInfo = async (userId: string) => {
+export const getUserInfo = async (userId: string): Promise<User | null> => {
   if (!userId) return null;
 
   const supabase = createSupabaseClient();

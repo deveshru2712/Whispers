@@ -36,6 +36,11 @@ declare global {
     user_id: string;
   }
 
+  interface User {
+    bio: string;
+    name: string;
+  }
+
   interface PostPage {
     params: Promise<{
       id: string;
