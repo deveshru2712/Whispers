@@ -3,9 +3,13 @@ import React from "react";
 import dayjs from "dayjs";
 import { MoveUpRight } from "lucide-react";
 
-const PostCard = ({ id, title, createdAt }: PostCardProps) => {
+const PostCard = ({ id, title, createdAt, className }: PostCardProps) => {
   return (
-    <div className="group w-full md:w-2/3 flex justify-between items-center">
+    <div
+      className={`group w-full flex justify-between items-center ${
+        className ? className : "md:w-2/3"
+      }`}
+    >
       <Link
         href={`/posts/${id}`}
         className="block p-4 rounded-lg transition-colors duration-200 relative flex-grow"

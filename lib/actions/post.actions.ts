@@ -105,3 +105,21 @@ export const deletePosts = async ({ blog_id, session }: deletePostProps) => {
 
   return data;
 };
+
+export const fetchPostByUser = async (userId: string) => {
+  if (!userId) return null;
+
+  const supabase = createSupabaseClient();
+  const { data, error } = await supabase
+    .from("blogs")
+    .select()
+    .eq("user_id", userId)
+    .select();
+
+  if (error) {
+    console.log(error);
+    throw new Error(error?.message || "Unable to fetch users post.");
+  }
+
+  return data;
+};

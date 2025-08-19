@@ -15,14 +15,29 @@ export default async function HomePage() {
       <Navbar />
 
       <main className="flex-1 container mx-auto px-4 py-8">
-        {session?.user && (
+        {session?.user ? (
           <div className="text-center max-w-2xl mx-auto mb-12">
             <h1 className="text-3xl md:text-4xl font-bold mb-4">
               Welcome back{session.user.name ? ` ${session.user.name}` : ""}.
             </h1>
             <p className="text-muted-foreground mb-6">
-              Share your thoughts and ideas with the world. Create your first
-              post to get started!
+              Share your thoughts and ideas with the world.
+              <Link
+                href={"/posts/create"}
+                className="underline underline-offset-2 ml-2"
+              >
+                Create a post!{" "}
+              </Link>
+            </p>
+          </div>
+        ) : (
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">
+              Welcome to our community!
+            </h1>
+            <p className="text-muted-foreground mb-6">
+              Join us to share your thoughts and ideas with the world. Sign up
+              to create posts and connect with other members.
             </p>
           </div>
         )}
@@ -48,13 +63,18 @@ export default async function HomePage() {
             <p className="text-muted-foreground mb-6">
               {session?.user
                 ? "Your audience is waiting for your content!"
-                : "Check back later for updates"}
+                : "Sign up to be the first to post!"}
             </p>
+            {!session?.user && (
+              <Button asChild>
+                <Link href="/auth/signup">Get Started</Link>
+              </Button>
+            )}
           </div>
         )}
       </main>
 
-      {session?.user && (
+      {session?.user ? (
         <div className="fixed bottom-6 right-6">
           <Button
             asChild
@@ -63,6 +83,18 @@ export default async function HomePage() {
             <Link href="/posts/create" className="flex items-center">
               <Pencil className="h-5 w-5 md:mr-2" />
               <span className="hidden md:inline">Create Post</span>
+            </Link>
+          </Button>
+        </div>
+      ) : (
+        <div className="fixed bottom-6 right-6">
+          <Button
+            asChild
+            className="rounded-lg shadow-lg h-14 w-14 p-0 md:h-auto md:w-auto md:px-4 md:py-2 bg-primary hover:bg-primary/90"
+          >
+            <Link href="/auth/signin" className="flex items-center">
+              <Pencil className="h-5 w-5 md:mr-2" />
+              <span className="hidden md:inline">Join Now</span>
             </Link>
           </Button>
         </div>

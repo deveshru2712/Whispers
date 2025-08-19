@@ -1,0 +1,21 @@
+"use server";
+
+import { createSupabaseClient } from "../supabase";
+
+export const getUserInfo = async (userId: string) => {
+  if (!userId) return null;
+
+  const supabase = createSupabaseClient();
+  const { data: user, error } = await supabase
+    .from("users")
+    .select()
+    .eq("id", userId)
+    .select("name,bio");
+
+  if (error) {
+    console.log(error);
+    throw new Error(error?.message || "Unable to fetch user information.");
+  }
+
+  return user[0];
+};

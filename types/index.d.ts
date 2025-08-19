@@ -22,6 +22,7 @@ declare global {
   }
 
   interface PostCardProps {
+    className?: string;
     id: string;
     title: string;
     createdAt: Date | string;
