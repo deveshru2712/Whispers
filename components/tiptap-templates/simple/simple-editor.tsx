@@ -74,7 +74,6 @@ import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
 import "@/components/tiptap-templates/simple/simple-editor.scss";
 
 // import defaultContent from "@/components/tiptap-templates/simple/data/content.json";
-import { type Session } from "next-auth";
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -147,10 +146,6 @@ const MainToolbarContent = ({
       <Spacer />
 
       {isMobile && <ToolbarSeparator />}
-
-      {/*  <ToolbarGroup>
-        <ThemeToggle />
-      </ToolbarGroup> */}
     </>
   );
 };
@@ -187,14 +182,12 @@ const MobileToolbarContent = ({
 interface SimpleEditorProps {
   content: string;
   onChange?: (content: string) => void;
-  session?: Session;
   isEditable: boolean;
 }
 
 export function SimpleEditor({
   content,
   onChange,
-  session,
   isEditable = true,
 }: SimpleEditorProps) {
   const isMobile = useIsMobile();
@@ -203,8 +196,6 @@ export function SimpleEditor({
     "main" | "highlighter" | "link"
   >("main");
   const toolbarRef = React.useRef<HTMLDivElement>(null);
-
-  console.log("Session when creating editor:", session?.user.id);
 
   const editor = useEditor({
     immediatelyRender: false,

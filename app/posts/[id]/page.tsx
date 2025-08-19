@@ -20,7 +20,6 @@ export default function Page() {
   const id = params.id as string;
 
   const [post, setPost] = useState<Post | null>(null);
-  console.log(post?.content);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

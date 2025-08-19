@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { fetchPostById, updatePosts } from "@/lib/actions/post.actions";
 import { BookCheck } from "lucide-react";
-import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -23,8 +22,6 @@ export default function HomePage() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [loading, setIsLoading] = useState(true);
   const buttonRef = useRef<HTMLButtonElement>(null);
-
-  const { data: session } = useSession();
 
   useEffect(() => {
     const getPost = async () => {
@@ -52,15 +49,41 @@ export default function HomePage() {
     setContent(post);
   };
 
+  const cleanContentBeforeSubmit = (content: string): string => {
+    const cleaned = content
+      .replace(/<div[^>]*data-type="image-upload"[^>]*><\/div>/g, "")
+      .replace(/<p[^>]*>\s*<\/p>/g, "")
+      .replace(/&nbsp;/g, " ")
+      .trim();
+    return cleaned;
+  };
+
   const handleSubmit = async () => {
-    if (!title.trim() || !content.trim()) {
-      toast.error("Please add a title and content before publishing");
+    if (!title.trim()) {
+      toast.error("Please add a title before publishing");
+      return;
+    }
+
+    const cleanedContent = cleanContentBeforeSubmit(content);
+    if (!cleanedContent.trim()) {
+      toast.error("Please add content before publishing");
+      return;
+    }
+
+    // Check if content is the same as original (after cleaning)
+    const isContentSame =
+      cleanContentBeforeSubmit(originalContent) === cleanedContent;
+    const isTitleSame = title === originalTitle;
+
+    if (isContentSame && isTitleSame) {
+      toast.error("No changes detected");
+      router.push("/");
       return;
     }
 
     try {
       setIsUpdating(true);
-      await updatePosts({ blog_id: id, title, content: content });
+      await updatePosts({ blog_id: id, title, content: cleanedContent });
       toast.success("Post updated successfully");
       router.push("/");
     } catch (error) {
@@ -77,7 +100,6 @@ export default function HomePage() {
     }
   }, [content]);
 
-  // Check if content or title has changed from original
   const hasChanges = content !== originalContent || title !== originalTitle;
 
   if (loading) {
@@ -112,7 +134,6 @@ export default function HomePage() {
               isEditable={true}
               content={content}
               onChange={onChange}
-              session={session ? session : undefined}
             />
           </div>
         </div>
@@ -124,6 +145,7 @@ export default function HomePage() {
             isUpdating || !content.trim() || !title.trim() || !hasChanges
           }
           className="cursor-pointer fixed bottom-10 right-10 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-md shadow-lg transition-all z-50"
+          aria-label="Update post"
         >
           {isUpdating ? (
             "Updating..."

@@ -9,8 +9,6 @@ export default async function middleware(request: NextRequest) {
 
     const sessionToken = request.cookies.get(sessionCookieName)?.value;
 
-    console.log("Session token from cookie:", sessionToken);
-
     const protectedRoutes = [
       "/posts/create",
       "/posts/update",

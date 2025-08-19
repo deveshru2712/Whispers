@@ -5,8 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createPosts } from "@/lib/actions/post.actions";
 import { BookCheck } from "lucide-react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -16,23 +15,44 @@ export default function HomePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const { data: session } = useSession();
-
   const router = useRouter();
 
   const onChange = (post: string) => {
     setContent(post);
   };
 
+  const cleanContentBeforeSubmit = (content: string): string => {
+    const cleaned = content
+      .replace(/<div[^>]*data-type="image-upload"[^>]*><\/div>/g, "")
+      .replace(/<p[^>]*>\s*<\/p>/g, "")
+      .replace(/&nbsp;/g, " ")
+      .trim();
+
+    return cleaned;
+  };
+
+  const isValidContent = (content: string): boolean => {
+    const cleaned = cleanContentBeforeSubmit(content);
+    const textOnly = cleaned.replace(/<[^>]*>/g, "").trim();
+    return textOnly.length > 0;
+  };
+
   const handleSubmit = async () => {
-    if (!title.trim() || !content.trim()) {
-      toast.error("Please add a title and content before publishing");
+    if (!title.trim()) {
+      toast.error("Please add a title before publishing");
+      return;
+    }
+
+    if (!isValidContent(content)) {
+      toast.error("Please add content before publishing");
+      redirect("/");
       return;
     }
 
     try {
       setIsSubmitting(true);
-      await createPosts({ title, content });
+      const cleanedContent = cleanContentBeforeSubmit(content);
+      await createPosts({ title, content: cleanedContent });
       toast.success("Post created successfully");
       router.push("/");
     } catch (error) {
@@ -50,7 +70,7 @@ export default function HomePage() {
   }, [content]);
 
   return (
-    <main className="container relative mx-auto px-4 pt-26 pb-32">
+    <main className="container relative mx-auto px-4 pt-4 pb-10">
       <div className="flex flex-col items-center">
         <div className="text-center max-w-2xl w-full mb-8">
           <h1 className="text-2xl md:text-3xl font-bold mb-2 dark:text-gray-100 text-gray-800">
@@ -60,7 +80,6 @@ export default function HomePage() {
             Pen down your thoughts, ideas, or anything you want to remember...
           </p>
         </div>
-
         <div className="w-full max-w-4xl border rounded-lg shadow-lg dark:shadow-2xl p-6">
           <div className="mb-4">
             <Label htmlFor="post-title" className="text-left w-full mb-2 block">
@@ -72,6 +91,8 @@ export default function HomePage() {
               onChange={(e) => setTitle(e.target.value)}
               placeholder="A title for your post..."
               className="w-full"
+              minLength={5}
+              maxLength={100}
             />
           </div>
 
@@ -80,27 +101,28 @@ export default function HomePage() {
               isEditable={true}
               content={content}
               onChange={onChange}
-              session={session ? session : undefined}
             />
           </div>
         </div>
 
-        <Button
-          ref={buttonRef}
-          onClick={handleSubmit}
-          disabled={isSubmitting || !content.trim() || !title.trim()}
-          className="cursor-pointer fixed bottom-10 right-10 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-md shadow-lg transition-all z-50"
-          aria-label="Publish post"
-        >
-          {isSubmitting ? (
-            "Publishing..."
-          ) : (
-            <>
-              <BookCheck className="mr-2 h-4 w-4" />
-              Publish
-            </>
-          )}
-        </Button>
+        <div className="w-full mt-8 flex justify-end">
+          <Button
+            ref={buttonRef}
+            onClick={handleSubmit}
+            disabled={isSubmitting || !content.trim() || !title.trim()}
+            className="cursor-pointer bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-md shadow-lg transition-all z-50"
+            aria-label="Publish post"
+          >
+            {isSubmitting ? (
+              "Publishing..."
+            ) : (
+              <>
+                <BookCheck className="mr-2 h-4 w-4" />
+                Publish
+              </>
+            )}
+          </Button>
+        </div>
       </div>
     </main>
   );
