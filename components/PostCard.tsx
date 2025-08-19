@@ -22,7 +22,7 @@ const PostCard = ({ id, title, createdAt, className }: PostCardProps) => {
             <div className="block md:hidden w-full text-normal font-semibold">
               {title.length > 60 ? title.slice(0, 40) + "..." : title}
             </div>
-            <div className="absoulte border group-hover:border-slate-900/20 group-hover:dark:border-slate-50/30 border-transparent -mt-0.5 transition-colors duration-300" />
+            <div className="absoulte border group-hover:border-slate-900/20 group-hover:dark:border-slate-50/30 border-transparent -mt-0.5 transition-all duration-500" />
 
             <div className="text-sm flex items-center gap-0.5 mt-0.5">
               <span className="text-slate-600 dark:text-slate-300">
@@ -30,7 +30,7 @@ const PostCard = ({ id, title, createdAt, className }: PostCardProps) => {
               </span>
               <MoveUpRight
                 size={16}
-                className="opacity-0 group-hover:opacity-100 translate-x-0 group-hover:translate-x-1 transition-all duration-200"
+                className="opacity-0 group-hover:opacity-100 translate-x-0 group-hover:translate-x-1 transition-all duration-500"
               />
             </div>
           </div>

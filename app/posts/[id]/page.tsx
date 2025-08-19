@@ -68,7 +68,7 @@ export default function Page() {
     <div className="w-full min-h-screen pb-12">
       <div className="max-w-6xl mx-auto px-6 py-6">
         <Link href="/">
-          <button className="cursor-pointer flex items-center px-2 py-1 rounded-md border hover:border-slate-300 dark:border-slate-50/40 hover:dark:border-slate-50/80 shadow-md dark:shadow-2xl transition-all duration-300 text-slate-500 hover:text-slate-700 dark:text-slate-300 hover:dark:text-slate-50">
+          <button className="cursor-pointer flex items-center px-2 py-1 rounded-md border hover:border-slate-300 dark:border-slate-50/40 hover:dark:border-slate-50/80 shadow-[rgba(13,_38,_76,_0.19)_0px_9px_20px] transition-all duration-300 text-slate-500 hover:text-slate-700 dark:text-slate-300 hover:dark:text-slate-50">
             <ArrowLeft size={20} />
             <span className="font-semibold pl-1">Back</span>
           </button>

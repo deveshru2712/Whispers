@@ -22,12 +22,6 @@ export default async function HomePage() {
             </h1>
             <p className="text-muted-foreground mb-6">
               Share your thoughts and ideas with the world.
-              <Link
-                href={"/posts/create"}
-                className="underline underline-offset-2 ml-2"
-              >
-                Create a post!{" "}
-              </Link>
             </p>
           </div>
         ) : (
