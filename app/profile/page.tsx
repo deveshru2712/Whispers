@@ -1,6 +1,7 @@
 "use client";
 import Loader from "@/components/Loader";
 import PostCard from "@/components/PostCard";
+import UpdateProfileDialog from "@/components/UpdateProfileDialog";
 import { fetchPostByUser } from "@/lib/actions/post.actions";
 import { getUserInfo } from "@/lib/actions/user.action";
 import { useSession } from "next-auth/react";
@@ -12,6 +13,7 @@ export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
   const [blogs, setBlogs] = useState<Post[] | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -41,9 +43,7 @@ export default function ProfilePage() {
         }
 
         if (blogsResult.status === "fulfilled") {
-          // userBlogs = blogsResult.value;
-          userBlogs = [];
-          // userBlogs = blogsResult.value;
+          userBlogs = blogsResult.value;
         } else {
           console.error("Failed to fetch user posts:", blogsResult.reason);
           toast.error("Failed to load your posts");
@@ -65,6 +65,19 @@ export default function ProfilePage() {
       setLoading(false);
     }
   }, [session, router]);
+
+  const handleEditProfile = () => {
+    setIsDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+  };
+
+  // Function to handle profile update success
+  const handleUpdateSuccess = (updatedUser: User) => {
+    setUser(updatedUser); // Update the user state with new data
+  };
 
   if (!session || loading) {
     return (
@@ -99,7 +112,10 @@ export default function ProfilePage() {
               <div>
                 <h2 className="text-2xl font-bold ">{user?.name}</h2>
               </div>
-              <button className="px-4 py-2 bg-black border text-white rounded-lg text-sm font-medium cursor-pointer transition-colors duration-300">
+              <button
+                onClick={handleEditProfile}
+                className="px-4 py-2 bg-black border text-white rounded-lg text-sm font-medium cursor-pointer transition-colors duration-300 hover:bg-gray-800"
+              >
                 Edit Profile
               </button>
             </div>
@@ -149,6 +165,16 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Update Profile Dialog */}
+      {user && (
+        <UpdateProfileDialog
+          isOpen={isDialogOpen}
+          handleDialogClose={handleCloseDialog}
+          user={user}
+          onUpdateSuccess={handleUpdateSuccess}
+        />
+      )}
     </div>
   );
 }

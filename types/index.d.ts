@@ -38,8 +38,22 @@ declare global {
 
   interface User {
     id: string;
-    bio: string;
     name: string;
+    bio: string;
+    username?: string;
+    email?: string;
+  }
+
+  interface UpdateForm {
+    name: string;
+    bio: string;
+  }
+
+  interface UserUpdateData {
+    name?: string;
+    bio?: string;
+    username?: string;
+    email?: string;
   }
 
   interface PostPage {

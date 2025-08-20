@@ -19,3 +19,30 @@ export const getUserInfo = async (userId: string): Promise<User | null> => {
 
   return user[0];
 };
+
+export const updateUserInfo = async (userId: string, form: UpdateForm) => {
+  const supabase = createSupabaseClient();
+
+  const { error: setUserIdError } = await supabase.rpc("set_user_id", {
+    user_id: userId,
+  });
+
+  if (setUserIdError) {
+    console.error("Set user ID error:", setUserIdError);
+    throw setUserIdError;
+  }
+
+  const { data, error } = await supabase
+    .from("users")
+    .update(form)
+    .eq("id", userId)
+    .select("id, name, bio")
+    .single();
+
+  if (error) {
+    console.error("Update error:", error);
+    throw error;
+  }
+
+  return data;
+};
