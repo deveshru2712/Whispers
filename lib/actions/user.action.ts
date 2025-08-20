@@ -10,7 +10,7 @@ export const getUserInfo = async (userId: string): Promise<User | null> => {
     .from("users")
     .select()
     .eq("id", userId)
-    .select("name,bio");
+    .select("name,bio,id");
 
   if (error) {
     console.log(error);

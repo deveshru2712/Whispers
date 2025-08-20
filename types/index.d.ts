@@ -37,6 +37,7 @@ declare global {
   }
 
   interface User {
+    id: string;
     bio: string;
     name: string;
   }

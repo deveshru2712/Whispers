@@ -41,7 +41,9 @@ export default function ProfilePage() {
         }
 
         if (blogsResult.status === "fulfilled") {
-          userBlogs = blogsResult.value;
+          // userBlogs = blogsResult.value;
+          userBlogs = [];
+          // userBlogs = blogsResult.value;
         } else {
           console.error("Failed to fetch user posts:", blogsResult.reason);
           toast.error("Failed to load your posts");
@@ -78,31 +80,33 @@ export default function ProfilePage() {
     return null;
   }
 
+  const isMine = session.user.id === user?.id;
+
   return (
     <div className="min-h-screen w-full ">
       <div className="max-w-4xl h-full flex flex-col gap-8 justify-start items-center mx-auto px-4 py-12 md:px-8">
         <div className="w-full text-center">
-          <h1 className="font-bold text-4xl md:text-5xl ">My Profile</h1>
-          <p className="mt-2 text-gray-600">Manage your account information</p>
+          <h1 className="font-bold text-2xl md:text-3xl">My Profile</h1>
+          <p className="mt-2 text-base text-gray-600">
+            Manage your account information
+          </p>
         </div>
 
         {/* Profile Card */}
         <div className="w-full md:w-4/5 lg:w-2/3 rounded-xl shadow-md overflow-hidden border ">
-          <div className="pt-16 px-6 pb-6">
+          <div className="py-5 px-6">
             <div className="flex justify-between items-start">
               <div>
-                <h2 className="text-2xl font-bold ">
-                  {user?.name || session?.user?.name || "User"}
-                </h2>
+                <h2 className="text-2xl font-bold ">{user?.name}</h2>
               </div>
-              <button className="px-4 py-2 bg-slate-950 border hover:bg-slate-900 text-white rounded-lg text-sm font-medium cursor-pointer transition-colors duration-300">
+              <button className="px-4 py-2 bg-black border text-white rounded-lg text-sm font-medium cursor-pointer transition-colors duration-300">
                 Edit Profile
               </button>
             </div>
 
             <div className="my-4 border-t"></div>
 
-            <div className="mt-6">
+            <div className="mt-2">
               <h3 className="font-semibold ">About</h3>
               <p className="text-gray-600 mt-1">
                 {user?.bio || "No bio provided yet."}
@@ -113,7 +117,9 @@ export default function ProfilePage() {
 
         {/* Blog showcase */}
         <div className="w-full md:w-4/5 lg:w-2/3">
-          <h3 className="text-xl font-medium  mb-4">Your Writings</h3>
+          <h3 className="text-xl font-medium  mb-4">
+            {isMine ? "Your Writings" : "Discover More Writings"}
+          </h3>
           <div className="w-full space-y-4">
             {blogs && blogs.length > 0 ? (
               blogs.map((post) => (
@@ -126,14 +132,18 @@ export default function ProfilePage() {
                 />
               ))
             ) : (
-              <div className="text-center py-8  rounded-lg border border-dashed">
-                <p className="">You haven&apos;t written any posts yet.</p>
-                <button
-                  className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                  onClick={() => router.push("/create")}
-                >
-                  Create Your First Post
-                </button>
+              <div className="text-center py-8">
+                {isMine && blogs?.length == 0 && (
+                  <div>
+                    <p className="">You haven&apos;t written any posts yet.</p>
+                    <button
+                      className="mt-4 cursor-pointer px-4 py-2 dark:bg-neutral-100 dark:text-black text-white bg-black font-semibold rounded-lg  transition-colors"
+                      onClick={() => router.push("/posts/create")}
+                    >
+                      Create Your First Post
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
