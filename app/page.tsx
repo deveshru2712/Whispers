@@ -5,10 +5,16 @@ import { fetchPosts } from "@/lib/actions/post.actions";
 import { Pencil } from "lucide-react";
 import { auth } from "@/auth";
 import Link from "next/link";
+import { getUserInfo } from "@/lib/actions/user.action";
 
 export default async function HomePage() {
   const session = await auth();
   const posts = await fetchPosts();
+
+  let user = null;
+  if (session?.user?.id) {
+    user = await getUserInfo(session.user.id);
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -18,7 +24,7 @@ export default async function HomePage() {
         {session?.user ? (
           <div className="text-center max-w-2xl mx-auto mb-12">
             <h1 className="text-3xl md:text-4xl font-bold mb-4">
-              Welcome back{session.user.name ? ` ${session.user.name}` : ""}.
+              Welcome back{user?.name ? ` ${user.name}` : ""}.
             </h1>
             <p className="text-muted-foreground mb-6">
               Share your thoughts and ideas with the world.
@@ -55,9 +61,7 @@ export default async function HomePage() {
                 : "No posts available yet"}
             </h2>
             <p className="text-muted-foreground mb-6">
-              {session?.user
-                ? "Your audience is waiting for your content!"
-                : "Sign up to be the first to post!"}
+              {session?.user ? "Write a word to share it!" : "Sign up to post!"}
             </p>
             {!session?.user && (
               <Button asChild>
