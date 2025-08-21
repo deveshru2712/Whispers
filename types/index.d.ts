@@ -40,8 +40,6 @@ declare global {
     id: string;
     name: string;
     bio: string;
-    username?: string;
-    email?: string;
   }
 
   interface UpdateForm {

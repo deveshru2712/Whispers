@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { Toggle } from "./Toggle";
+import NavigationDropdown from "./NavigationDropdown";
 
 export default function Navbar() {
   return (
@@ -14,6 +15,7 @@ export default function Navbar() {
             Whispers
           </Link>
           <div className="flex items-center gap-4">
+            <NavigationDropdown />
             <Toggle />
           </div>
         </div>
